@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">My University</string>
+    <string name="app_name_en">My University</string>
+    <string name="app_name_ru">Мой ВУЗ</string>
+
+    <string name="CourseSpinnerNameEn">Chose a course</string>
+    <string name="UniversitySpinnerNameEn">Chose a university</string>
+    <string name="GroupSpinnerNameEn">Chose a group</string>
+
+    <string name="CourseSpinnerNameRu">Выберите курс</string>
+    <string name="UniversitySpinnerNameRu">Выберите институт</string>
+    <string name="GroupSpinnerNameRu">Выберите группу</string>
+
+    <string-array name="courseList">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="universityList3">
+        <item>ИТиУТС</item>
+        <item>Институт ядерной энергии и промышленности</item>
+        <item>Юридический институт</item>
+        <item>Морской институт</item>
+        <item>Институт радиоэлектроники и информационной безопасности</item>
+        <item>Институт финансов, экономики и управления</item>
+        <item>Политехнический институт</item>
+        <item>Институт общественных наук и международных отношений</item>
+        <item>Гуманитарно-педагогический институт</item>
+        <item>Центр Физическая культура и спорт</item>
+        <item>Институт развития города</item>
+        <item>Институт НТИ</item>
+        <item>Морской колледж</item>
+        <item>Аспирантура</item>
+    </string-array>
+    <string-array name="universityList">
+        <item>ИТиУТС</item>
+        <item>Ядерка</item>
+        <item>Юристы</item>
+        <item>Морской И</item>
+        <item>ИРИБ</item>
+        <item>ФЭУ</item>
+        <item>Политех</item>
+        <item>ОНиМО</item>
+        <item>ГПИ</item>
+        <item>ЦФКС</item>
+        <item>ИРГ</item>
+        <item>НТИ</item>
+        <item>Морской К</item>
+        <item>Аспирантура</item>
+    </string-array>
+
+    <string-array name="groupList">
+        <item>1 группа</item>
+        <item>2 группа</item>
+        <item>3 группа</item>
+        <item>4 группа</item>
+        <item>5 группа</item>
+    </string-array>
+
+</resources>
