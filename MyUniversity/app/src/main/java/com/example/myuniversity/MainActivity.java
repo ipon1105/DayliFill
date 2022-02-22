@@ -2,6 +2,7 @@ package com.example.myuniversity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,9 +70,10 @@ public class MainActivity extends AppCompatActivity {
         btnNext = (Button) findViewById(R.id.btnNext);
 
         list = (RecyclerView) findViewById(R.id.instituteList);
-
         GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
+
         list.setLayoutManager(layoutManager);
+        list.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
 
         onClick(findViewById(index));
 
