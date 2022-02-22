@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -17,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -28,7 +26,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -109,28 +106,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class ListItemsAdapter extends RecyclerView.Adapter<ListItemsAdapter.ViewHolder> {
+        private int lastItemSelected = -1;
         private ArrayList<String> list;
         private LayoutInflater mInflate;
         private Context context;
+        private ArrayList<ListItemsAdapter.ViewHolder> viewList;
 
         public ListItemsAdapter(Context context, ArrayList<String> list){
             this.mInflate = LayoutInflater.from(context);
             this.context = context;
             this.list = list;
+
+            viewList = new ArrayList<>();
         }
 
         @NonNull
         @Override
         public ListItemsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = mInflate.inflate(R.layout.institute_item, parent, false);
-            return new ViewHolder(view);
+            viewList.add(new ViewHolder(view));
+            return viewList.get(viewList.size() - 1);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ListItemsAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ListItemsAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
             String name = list.get(position);
             if(name != null)
                 holder.itemName.setText(name);
+            holder.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(lastItemSelected != -1)
+                        viewList.get(lastItemSelected).itemName.setTextColor(getResources().getColor(R.color.white));
+                    lastItemSelected = position;
+                    holder.itemName.setTextColor(getResources().getColor(R.color.full_green));
+                }
+            });
         }
 
         @Override
@@ -147,6 +158,8 @@ public class MainActivity extends AppCompatActivity {
 
                 view = itemView;
                 itemName = (TextView) view.findViewById(R.id.item);
+
+
             }
         }
     }

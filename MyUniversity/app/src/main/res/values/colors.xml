@@ -15,4 +15,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="whiteOn">#FFFFFFFF</color>
     <color name="whiteOff">#D3D3D3</color>
+    <color name="full_green">#4CFF00</color>
+
 </resources>
