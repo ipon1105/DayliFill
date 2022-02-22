@@ -7,56 +7,86 @@
     <string name="UniversitySpinnerNameEn">Chose a university</string>
     <string name="GroupSpinnerNameEn">Chose a group</string>
 
-    <string name="CourseSpinnerNameRu">Выберите курс</string>
-    <string name="UniversitySpinnerNameRu">Выберите институт</string>
-    <string name="GroupSpinnerNameRu">Выберите группу</string>
+    <string name="CourseSpinnerNameRu">Выберите курс:</string>
+    <string name="UniversitySpinnerNameRu">Выберите институт:</string>
+    <string name="GroupSpinnerNameRu">Выберите группу:</string>
+    <string name="FullTimeRu">ДФО</string>
+    <string name="PartTimeRu">ЗФО</string>
+    <string name="SessionRu">Сессия</string>
 
     <string-array name="courseList">
+        <item>Выбрать курс</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
     </string-array>
 
-    <string-array name="universityList3">
-        <item>ИТиУТС</item>
-        <item>Институт ядерной энергии и промышленности</item>
-        <item>Юридический институт</item>
-        <item>Морской институт</item>
-        <item>Институт радиоэлектроники и информационной безопасности</item>
-        <item>Институт финансов, экономики и управления</item>
-        <item>Политехнический институт</item>
-        <item>Институт общественных наук и международных отношений</item>
-        <item>Гуманитарно-педагогический институт</item>
-        <item>Центр Физическая культура и спорт</item>
-        <item>Институт развития города</item>
-        <item>Институт НТИ</item>
-        <item>Морской колледж</item>
-        <item>Аспирантура</item>
-    </string-array>
     <string-array name="universityList">
-        <item>ИТиУТС</item>
-        <item>Ядерка</item>
-        <item>Юристы</item>
-        <item>Морской И</item>
+        <item>Выбрать университет</item>
+        <item>ИИТУТС</item>
+        <item>ИЯЭиП</item>
+        <item>ЮИ</item>
         <item>ИРИБ</item>
-        <item>ФЭУ</item>
-        <item>Политех</item>
-        <item>ОНиМО</item>
+        <item>ИФЭУ</item>
+        <item>ПИ</item>
+        <item>ИОНиМО</item>
         <item>ГПИ</item>
-        <item>ЦФКС</item>
+        <item>РИСОТ</item>
         <item>ИРГ</item>
         <item>НТИ</item>
-        <item>Морской К</item>
+        <item>Морской Институт</item>
+        <item>Морской Колледж</item>
+        <item>ИПИ</item>
         <item>Аспирантура</item>
     </string-array>
-
+    
     <string-array name="groupList">
+        <item>Выбрать группу</item>
         <item>1 группа</item>
         <item>2 группа</item>
         <item>3 группа</item>
         <item>4 группа</item>
         <item>5 группа</item>
     </string-array>
+
+
+    <string-array name="_1">
+        <item>1 семестр</item>
+        <item>2 семестр</item>
+        <item>1 курс</item>
+        <item>2 курс</item>
+        <item>3 курс</item>
+        <item>4 курс</item>
+        <item>1 курс магистратура</item>
+        <item>2 курс магистратура</item>
+    </string-array>
+    <string-array name="_2">
+        <item>1 семестр</item>
+        <item>2 семестр</item>
+    </string-array>
+    <string-array name="_3">
+        <item>1 семестр ЮИ</item>
+        <item>1 семестр ЮИ ОЗФО</item>
+        <item>2 семестр ЮИ</item>
+        <item>2 семестр ЮИ ОЗФО</item>
+    </string-array>
+    <string-array name="_4">
+        <item>1 семестр ИРИБ</item>
+        <item>1 семестр ИБ/б, ИБ/м, КБ/с</item>
+        <item>1 семестр ИБ/м ОЗФО</item>
+        <item>2 семестр ИРИБ</item>
+        <item>2 семестр ИБ/б, ИБ/м</item>
+        <item>2 семестр ИБ ОЗФО</item>
+    </string-array>
+    <string-array name="_5">
+        <item>1 семестр ИФЭУ</item>
+        <item>1 семестр ЭК/б-21-оз, ЭК/м-21-оз</item>
+        <item>1 семестр М/б-21-оз</item>
+        <item>2 семестр ИРИБ</item>
+        <item>2 семестр ИБ/б, ИБ/м</item>
+        <item>2 семестр ИБ ОЗФО</item>
+    </string-array>
+
 
 </resources>
