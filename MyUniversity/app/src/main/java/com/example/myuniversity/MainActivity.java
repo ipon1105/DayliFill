@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         btnNext = (Button) findViewById(R.id.btnNext);
 
         list = (RecyclerView) findViewById(R.id.instituteList);
+
         GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
 
         list.setLayoutManager(layoutManager);
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        btnNext.setEnabled(false);
 
         //"https://www.sevsu.ru/univers/shedule", "1"
         //AsyncTask<String, Void, ArrayList<String>> a = new Downloader().execute();
