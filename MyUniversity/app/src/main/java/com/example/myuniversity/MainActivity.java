@@ -30,6 +30,9 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    //id кнопки, на которое приходилось нажатие
+    int index = R.id.btnFullTime;
+
     int a = 0,b = 0,c = 0;
     private Button btn;
     private Button btnFullTime;
@@ -59,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         Spinner courseSpinner = (Spinner) findViewById(R.id.courceSpinner);
         Spinner universitySpinner = (Spinner) findViewById(R.id.universitySpinner);
         Spinner groupSpinner = (Spinner) findViewById(R.id.groupSpinner);
+
+        onClick(findViewById(index));
 
         ArrayAdapter<CharSequence> courseAdapter = ArrayAdapter.createFromResource(this,R.array.courseList, android.R.layout.simple_spinner_dropdown_item);
         ArrayAdapter<CharSequence> universityAdapter = ArrayAdapter.createFromResource(this,R.array.universityList, android.R.layout.simple_spinner_dropdown_item);
@@ -110,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick(View view){
+        index = view.getId();
         btnFullTime.setTextColor(getResources().getColor((view.getId() == R.id.btnFullTime ? R.color.whiteOn : R.color.whiteOff)));
         btnPartTime.setTextColor(getResources().getColor((view.getId() == R.id.btnPartTime ? R.color.whiteOn : R.color.whiteOff)));
         btnSession.setTextColor(getResources().getColor((view.getId() == R.id.btnSession ? R.color.whiteOn : R.color.whiteOff)));
