@@ -1,49 +1,56 @@
 package com.example.myuniversity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
-
-import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.io.Resources;
+import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     //id кнопки, на которое приходилось нажатие
     int index = R.id.btnFullTime;
 
-    int a = 0,b = 0,c = 0;
-    private Button btn;
+    private Downloader onlineData;
+    private ListItemsAdapter itemsAdapter;
+
+    private Button btnNext;
     private Button btnFullTime;
     private Button btnPartTime;
     private Button btnSession;
+    private RecyclerView list;
 
     @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        onlineData = new Downloader();
+        onlineData.execute("https://www.sevsu.ru/univers/shedule");
 
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -59,71 +66,87 @@ public class MainActivity extends AppCompatActivity {
         btnFullTime = (Button) findViewById(R.id.btnFullTime);
         btnPartTime = (Button) findViewById(R.id.btnPartTime);
         btnSession = (Button) findViewById(R.id.btnSession);
-        Spinner courseSpinner = (Spinner) findViewById(R.id.courceSpinner);
-        Spinner universitySpinner = (Spinner) findViewById(R.id.universitySpinner);
-        Spinner groupSpinner = (Spinner) findViewById(R.id.groupSpinner);
+        btnNext = (Button) findViewById(R.id.btnNext);
+
+        list = (RecyclerView) findViewById(R.id.instituteList);
+
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
+        list.setLayoutManager(layoutManager);
 
         onClick(findViewById(index));
 
-        ArrayAdapter<CharSequence> courseAdapter = ArrayAdapter.createFromResource(this,R.array.courseList, android.R.layout.simple_spinner_dropdown_item);
-        ArrayAdapter<CharSequence> universityAdapter = ArrayAdapter.createFromResource(this,R.array.universityList, android.R.layout.simple_spinner_dropdown_item);
-        ArrayAdapter<CharSequence> groupAdapter = ArrayAdapter.createFromResource(this,R.array.groupList, android.R.layout.simple_spinner_dropdown_item);
-
-        courseSpinner.setAdapter(courseAdapter);
-        universitySpinner.setAdapter(universityAdapter);
-        groupSpinner.setAdapter(groupAdapter);
-
-        courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                a = (i != 0 ? 1 : 0);
-                checkBtn();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-        universitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                b = (i != 0 ? 1 : 0);
-                checkBtn();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                c = (i != 0 ? 1 : 0);
-                checkBtn();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-
-        ( btn = (Button) findViewById(R.id.btnNext)).setOnClickListener(new View.OnClickListener() {
+        btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });
 
-        AsyncTask<String, Void, ArrayList<String>> a = new Downloader().execute("https://www.sevsu.ru/univers/shedule", "1");
+        //"https://www.sevsu.ru/univers/shedule", "1"
+        //AsyncTask<String, Void, ArrayList<String>> a = new Downloader().execute();
     }
 
     public void onClick(View view){
         index = view.getId();
-        btnFullTime.setTextColor(getResources().getColor((view.getId() == R.id.btnFullTime ? R.color.whiteOn : R.color.whiteOff)));
-        btnPartTime.setTextColor(getResources().getColor((view.getId() == R.id.btnPartTime ? R.color.whiteOn : R.color.whiteOff)));
-        btnSession.setTextColor(getResources().getColor((view.getId() == R.id.btnSession ? R.color.whiteOn : R.color.whiteOff)));
+
+        btnFullTime.setTextColor(getResources().getColor((index == R.id.btnFullTime ? R.color.whiteOn : R.color.whiteOff)));
+        btnPartTime.setTextColor(getResources().getColor((index == R.id.btnPartTime ? R.color.whiteOn : R.color.whiteOff)));
+        btnSession.setTextColor(getResources().getColor((index == R.id.btnSession ? R.color.whiteOn : R.color.whiteOff)));
+
+        if(index == R.id.btnFullTime)
+            itemsAdapter = new ListItemsAdapter(this, onlineData.getInstituteFullTime());
+        else if (index == R.id.btnPartTime)
+            itemsAdapter = new ListItemsAdapter(this, onlineData.getInstitutePartTime());
+        else
+            itemsAdapter = new ListItemsAdapter(this, onlineData.getInstituteSession());
+
+        if (itemsAdapter != null)
+            list.setAdapter(itemsAdapter);
     }
 
-    void checkBtn(){
-        btn.setEnabled(a+b+c == 3 ? true : false);
+    class ListItemsAdapter extends RecyclerView.Adapter<ListItemsAdapter.ViewHolder> {
+        private ArrayList<String> list;
+        private LayoutInflater mInflate;
+        private Context context;
+
+        public ListItemsAdapter(Context context, ArrayList<String> list){
+            this.mInflate = LayoutInflater.from(context);
+            this.context = context;
+            this.list = list;
+        }
+
+        @NonNull
+        @Override
+        public ListItemsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = mInflate.inflate(R.layout.institute_item, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ListItemsAdapter.ViewHolder holder, int position) {
+            String name = list.get(position);
+            if(name != null)
+                holder.itemName.setText(name);
+        }
+
+        @Override
+        public int getItemCount() {
+            return list.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public TextView itemName;
+            public View view;
+
+            public ViewHolder(@NonNull View itemView) {
+                super(itemView);
+
+                view = itemView;
+                itemName = (TextView) view.findViewById(R.id.item);
+            }
+        }
     }
+
 }
 
 class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
@@ -134,19 +157,13 @@ class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
     private ArrayList<String> institutePartTime;
     private ArrayList<String> instituteSession;
 
-    private ArrayList<String> instituteList;
-
     public Downloader(){
-        if(instituteList != null)
-            return;
-
-        instituteList     = new ArrayList<>();
         instituteFullTime = new ArrayList<>();
         institutePartTime = new ArrayList<>();
         instituteSession  = new ArrayList<>();
     }
 
-    @Override//2 агрументы, где 1 - это адресс, а 2 - это имя класса
+    @Override
     protected ArrayList<String> doInBackground(String... strings) {
         Document doc;
         Elements contents;
@@ -155,21 +172,13 @@ class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
             doc = Jsoup.connect(strings[0]).get();
             contents = doc.select(instituteBlocks);
 
-            switch (strings[1]){
-                case "1": downloadFullTime(contents.get(0));  break;
-                case "2": downloadPartTime(contents.get(1));  break;
-                case "3": downloadSession (contents.get(2));  break;
-            }
+            downloadFullTime(contents.get(0));
+            downloadPartTime(contents.get(1));
+            downloadSession (contents.get(2));
 
         } catch (IOException e) {
             e.printStackTrace();
             Log.e("debug", "exception", e);
-        }
-
-        switch (strings[1]){
-            case "1": return instituteFullTime;
-            case "2": return institutePartTime;
-            case "3": return instituteSession;
         }
 
         return null;
@@ -177,7 +186,7 @@ class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
 
     //Скачать из блока ДФО
     void downloadFullTime(Element block){
-        if(block != null)
+        if(block == null)
             return;
 
         Elements listName = block.select(instituteNames);
@@ -188,7 +197,7 @@ class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
 
     //Скачать из блока ЗФО
     void downloadPartTime(Element block){
-        if(block != null)
+        if(block == null)
             return;
 
         Elements listName = block.select(instituteNames);
@@ -199,12 +208,24 @@ class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
 
     //Скачать из блока Сессия
     void downloadSession(Element block){
-        if(block != null)
+        if(block == null)
             return;
 
         Elements listName = block.select(instituteNames);
 
         for (Element el : listName)
             instituteSession.add(el.text());
+    }
+
+    public ArrayList<String> getInstituteFullTime() {
+        return instituteFullTime;
+    }
+
+    public ArrayList<String> getInstitutePartTime() {
+        return institutePartTime;
+    }
+
+    public ArrayList<String> getInstituteSession() {
+        return instituteSession;
     }
 }

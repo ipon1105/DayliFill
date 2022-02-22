@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Цвета собственных ресурсов -->
+    <color name="list_back">#1A951D</color>
+
     <color name="mainColor">#2EC632</color>
     <color name="textColor">#FFFFFF</color>
-
 
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
