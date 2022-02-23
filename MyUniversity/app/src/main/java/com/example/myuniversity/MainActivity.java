@@ -7,16 +7,21 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.location.GnssAntennaInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -40,12 +45,17 @@ public class MainActivity extends AppCompatActivity {
     private Button btnPartTime;
     private Button btnSession;
     private RecyclerView list;
+    private ProgressBar progressBar;
+
+    private Context mainContext;
 
     @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mainContext = this;
 
         onlineData = new Downloader();
         onlineData.execute("https://www.sevsu.ru/univers/shedule");
@@ -67,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         btnNext = (Button) findViewById(R.id.btnNext);
 
         list = (RecyclerView) findViewById(R.id.instituteList);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
 
@@ -83,12 +94,49 @@ public class MainActivity extends AppCompatActivity {
         });
         btnNext.setEnabled(false);
 
-        //"https://www.sevsu.ru/univers/shedule", "1"
-        //AsyncTask<String, Void, ArrayList<String>> a = new Downloader().execute();
+        //"https://www.sevsu.ru/univers/shedule"
+        onlineData.setFinish(new Downloader.OnFinish() {
+            @Override
+            public void ProcessIsFinish() {
+
+                if(index == R.id.btnFullTime)
+                    itemsAdapter = new ListItemsAdapter(mainContext, onlineData.getInstituteFullTime());
+                else if (index == R.id.btnPartTime)
+                    itemsAdapter = new ListItemsAdapter(mainContext, onlineData.getInstitutePartTime());
+                else
+                    itemsAdapter = new ListItemsAdapter(mainContext, onlineData.getInstituteSession());
+
+                if (itemsAdapter.list.size() != 0){
+                    list.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            list.setAdapter(itemsAdapter);
+                            progressBar.setVisibility(View.INVISIBLE);
+                            progressBar.setEnabled(false);
+                        }
+                    });
+
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setEnabled(true);
+                }
+                //btnFullTime.setTextColor(getResources().getColor((index == R.id.btnFullTime ? R.color.whiteOn : R.color.whiteOff)));
+                //btnPartTime.setTextColor(getResources().getColor((index == R.id.btnPartTime ? R.color.whiteOn : R.color.whiteOff)));
+                //btnSession.setTextColor(getResources().getColor((index == R.id.btnSession ? R.color.whiteOn : R.color.whiteOff)));
+//
+                //if(index == R.id.btnFullTime)
+                //    itemsAdapter = new ListItemsAdapter(this, onlineData.getInstituteFullTime());
+                //else if (index == R.id.btnPartTime)
+                //    itemsAdapter = new ListItemsAdapter(this, onlineData.getInstitutePartTime());
+                //else
+                //    itemsAdapter = new ListItemsAdapter(this, onlineData.getInstituteSession());
+            }
+        });
     }
 
     public void onClick(View view){
-        index = view.getId();
+        if(view != null)
+            index = view.getId();
 
         btnFullTime.setTextColor(getResources().getColor((index == R.id.btnFullTime ? R.color.whiteOn : R.color.whiteOff)));
         btnPartTime.setTextColor(getResources().getColor((index == R.id.btnPartTime ? R.color.whiteOn : R.color.whiteOff)));
@@ -101,8 +149,14 @@ public class MainActivity extends AppCompatActivity {
         else
             itemsAdapter = new ListItemsAdapter(this, onlineData.getInstituteSession());
 
-        if (itemsAdapter != null)
+        if (itemsAdapter.list.size() != 0){
             list.setAdapter(itemsAdapter);
+            progressBar.setVisibility(View.INVISIBLE);
+            progressBar.setEnabled(false);
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setEnabled(true);
+        }
     }
 
     class ListItemsAdapter extends RecyclerView.Adapter<ListItemsAdapter.ViewHolder> {
@@ -174,10 +228,18 @@ class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
     private ArrayList<String> institutePartTime;
     private ArrayList<String> instituteSession;
 
+    public interface OnFinish{
+        public void ProcessIsFinish();
+    }
+
+    private OnFinish finish;
+
     public Downloader(){
         instituteFullTime = new ArrayList<>();
         institutePartTime = new ArrayList<>();
         instituteSession  = new ArrayList<>();
+
+        finish = null;
     }
 
     @Override
@@ -198,6 +260,8 @@ class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
             Log.e("debug", "exception", e);
         }
 
+        if(finish != null)
+            finish.ProcessIsFinish();
         return null;
     }
 
@@ -245,4 +309,9 @@ class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
     public ArrayList<String> getInstituteSession() {
         return instituteSession;
     }
+
+    public void setFinish(OnFinish finish){
+        this.finish = finish;
+    }
+
 }
