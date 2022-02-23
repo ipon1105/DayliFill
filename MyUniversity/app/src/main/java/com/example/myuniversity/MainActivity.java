@@ -13,11 +13,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 
+import com.example.myuniversity.SignOn.Support.Downloader;
 import com.example.myuniversity.SignOn.Support.ItemClickListener;
 import com.example.myuniversity.SignOn.Support.ListItemsAdapter;
 
 public class MainActivity extends AppCompatActivity {
     //Для анимации переходов между nav_graph https://habr.com/ru/company/funcorp/blog/521340/
+    public static Downloader downloader;
 
     @SuppressLint("WrongThread")
     @Override
@@ -35,12 +37,8 @@ public class MainActivity extends AppCompatActivity {
                   | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
             );
         }
-
-
-
-
-        //"https://www.sevsu.ru/univers/shedule"
-
+        downloader = new Downloader();
+        downloader.execute("https://www.sevsu.ru/univers/shedule");
 
     }
 

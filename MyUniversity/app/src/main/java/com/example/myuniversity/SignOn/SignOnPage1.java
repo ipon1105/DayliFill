@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.myuniversity.MainActivity;
 import com.example.myuniversity.R;
 import com.example.myuniversity.SignOn.Support.Downloader;
 import com.example.myuniversity.SignOn.Support.ItemClickListener;
@@ -25,7 +26,6 @@ public class SignOnPage1 extends Fragment {
     private FragmentSignOnPage1Binding binding;
     private ListItemsAdapter itemsAdapter;
     private ItemClickListener listener;
-    private Downloader onlineData;
     private int index = R.id.btnFullTime;
 
     @Override
@@ -45,8 +45,6 @@ public class SignOnPage1 extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         final NavController controller = (NavController) Navigation.findNavController(view);
-        onlineData = new Downloader();
-        onlineData.execute("https://www.sevsu.ru/univers/shedule");
         listener = new ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -61,16 +59,16 @@ public class SignOnPage1 extends Fragment {
 
         binding.btnNext.setEnabled(false);
 
-        onlineData.setFinish(new Downloader.OnFinish() {
+        MainActivity.downloader.setFinish(new Downloader.OnFinish() {
             @Override
             public void ProcessIsFinish() {
 
                 if(index == R.id.btnFullTime)
-                    itemsAdapter = new ListItemsAdapter(binding.getRoot().getContext(), onlineData.getInstituteFullTime());
+                    itemsAdapter = new ListItemsAdapter(binding.getRoot().getContext(), MainActivity.downloader.getInstituteFullTime());
                 else if (index == R.id.btnPartTime)
-                    itemsAdapter = new ListItemsAdapter(binding.getRoot().getContext(), onlineData.getInstitutePartTime());
+                    itemsAdapter = new ListItemsAdapter(binding.getRoot().getContext(), MainActivity.downloader.getInstitutePartTime());
                 else
-                    itemsAdapter = new ListItemsAdapter(binding.getRoot().getContext(), onlineData.getInstituteSession());
+                    itemsAdapter = new ListItemsAdapter(binding.getRoot().getContext(), MainActivity.downloader.getInstituteSession());
 
                 itemsAdapter.setClickListener(listener);
 
@@ -100,7 +98,14 @@ public class SignOnPage1 extends Fragment {
         binding.btnFullTime.setOnClickListener(myClick);
         binding.btnPartTime.setOnClickListener(myClick);
         binding.btnSession.setOnClickListener(myClick);
-        //controller.navigate(R.id.action_signOnPage1_to_signOnPage2);
+        binding.btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                controller.navigate(R.id.action_signOnPage1_to_signOnPage2);
+            }
+        });
+        myClick(null);
+
     }
 
     public void myClick(View view){
@@ -113,11 +118,11 @@ public class SignOnPage1 extends Fragment {
         binding.btnSession.setTextColor(getResources().getColor((index == R.id.btnSession ? R.color.whiteOn : R.color.whiteOff)));
 
         if(index == R.id.btnFullTime)
-            itemsAdapter = new ListItemsAdapter(this.getContext(), onlineData.getInstituteFullTime());
+            itemsAdapter = new ListItemsAdapter(this.getContext(), MainActivity.downloader.getInstituteFullTime());
         else if (index == R.id.btnPartTime)
-            itemsAdapter = new ListItemsAdapter(this.getContext(), onlineData.getInstitutePartTime());
+            itemsAdapter = new ListItemsAdapter(this.getContext(), MainActivity.downloader.getInstitutePartTime());
         else
-            itemsAdapter = new ListItemsAdapter(this.getContext(), onlineData.getInstituteSession());
+            itemsAdapter = new ListItemsAdapter(this.getContext(), MainActivity.downloader.getInstituteSession());
 
         itemsAdapter.setClickListener(listener);
 

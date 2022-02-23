@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.myuniversity.R;
+import com.example.myuniversity.SignOn.Support.Downloader;
 import com.example.myuniversity.databinding.FragmentSignOnPage1Binding;
 import com.example.myuniversity.databinding.FragmentSignOnPage2Binding;
 
