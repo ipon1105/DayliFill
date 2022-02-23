@@ -31,6 +31,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
     private Downloader onlineData;
     private ListItemsAdapter itemsAdapter;
+    private ItemClickListener listener;
+
+    private TextView textView;
 
     private Button btnNext;
     private Button btnFullTime;
@@ -55,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        textView = null;
         mainContext = this;
 
         onlineData = new Downloader();
@@ -70,6 +75,21 @@ public class MainActivity extends AppCompatActivity {
                   | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
             );
         }
+
+        /*
+        if(textView != null)
+            textView.setTextColor(getResources().getColor(R.color.white));
+        textView = ((TextView) view);
+        textView.setTextColor(getResources().getColor(R.color.full_green));
+         */
+
+        listener = new ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                itemsAdapter.notifyDataSetChanged();
+                btnNext.setEnabled(true);
+            }
+        };
 
         btnFullTime = (Button) findViewById(R.id.btnFullTime);
         btnPartTime = (Button) findViewById(R.id.btnPartTime);
@@ -106,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
                 else
                     itemsAdapter = new ListItemsAdapter(mainContext, onlineData.getInstituteSession());
 
+                itemsAdapter.setClickListener(listener);
+
                 if (itemsAdapter.list.size() != 0){
                     list.post(new Runnable() {
                         @Override
@@ -120,21 +142,13 @@ public class MainActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.VISIBLE);
                     progressBar.setEnabled(true);
                 }
-                //btnFullTime.setTextColor(getResources().getColor((index == R.id.btnFullTime ? R.color.whiteOn : R.color.whiteOff)));
-                //btnPartTime.setTextColor(getResources().getColor((index == R.id.btnPartTime ? R.color.whiteOn : R.color.whiteOff)));
-                //btnSession.setTextColor(getResources().getColor((index == R.id.btnSession ? R.color.whiteOn : R.color.whiteOff)));
-//
-                //if(index == R.id.btnFullTime)
-                //    itemsAdapter = new ListItemsAdapter(this, onlineData.getInstituteFullTime());
-                //else if (index == R.id.btnPartTime)
-                //    itemsAdapter = new ListItemsAdapter(this, onlineData.getInstitutePartTime());
-                //else
-                //    itemsAdapter = new ListItemsAdapter(this, onlineData.getInstituteSession());
             }
         });
+
     }
 
     public void onClick(View view){
+        btnNext.setEnabled(false);
         if(view != null)
             index = view.getId();
 
@@ -149,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
         else
             itemsAdapter = new ListItemsAdapter(this, onlineData.getInstituteSession());
 
+        itemsAdapter.setClickListener(listener);
+
         if (itemsAdapter.list.size() != 0){
             list.setAdapter(itemsAdapter);
             progressBar.setVisibility(View.INVISIBLE);
@@ -159,41 +175,46 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public interface ItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
     class ListItemsAdapter extends RecyclerView.Adapter<ListItemsAdapter.ViewHolder> {
-        private int lastItemSelected = -1;
-        private ArrayList<String> list;
+        private ArrayList<Model> list;
         private LayoutInflater mInflate;
         private Context context;
-        private ArrayList<ListItemsAdapter.ViewHolder> viewList;
+
+        private ItemClickListener listener;
 
         public ListItemsAdapter(Context context, ArrayList<String> list){
             this.mInflate = LayoutInflater.from(context);
             this.context = context;
-            this.list = list;
 
-            viewList = new ArrayList<>();
+            this.list = new ArrayList<>();
+            for(String s : list)
+                this.list.add(new Model(s));
         }
 
         @NonNull
         @Override
         public ListItemsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = mInflate.inflate(R.layout.institute_item, parent, false);
-            viewList.add(new ViewHolder(view));
-            return viewList.get(viewList.size() - 1);
+            return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ListItemsAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-            String name = list.get(position);
-            if(name != null)
-                holder.itemName.setText(name);
+            holder.itemName.setText(list.get(position).name);
+            holder.itemName.setTextColor(getResources().getColor(list.get(position).set ? R.color.full_green : R.color.white));
             holder.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(lastItemSelected != -1)
-                        viewList.get(lastItemSelected).itemName.setTextColor(getResources().getColor(R.color.white));
-                    lastItemSelected = position;
-                    holder.itemName.setTextColor(getResources().getColor(R.color.full_green));
+                    for(Model m : list)
+                        m.set = false;
+
+                    list.get(position).set = true;
+                    if (listener != null)
+                        listener.onItemClick(holder.itemName, holder.getAdapterPosition());
                 }
             });
         }
@@ -212,10 +233,23 @@ public class MainActivity extends AppCompatActivity {
 
                 view = itemView;
                 itemName = (TextView) view.findViewById(R.id.item);
-
-
             }
         }
+
+        void setClickListener(ItemClickListener itemClickListener) {
+            listener = itemClickListener;
+        }
+
+        class Model{
+            String name;
+            Boolean set;
+
+            public Model(String name){
+                this.name = name;
+                set = false;
+            }
+        }
+
     }
 
 }
