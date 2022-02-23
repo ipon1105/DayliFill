@@ -15,10 +15,14 @@ import java.util.ArrayList;
 public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
     private final String instituteBlocks = ".su-column-content";
     private final String instituteNames = ".su-spoiler-title";
+    private final String courseNames = ".su-spoiler-content su-clearfix";
 
     private ArrayList<String> instituteFullTime;
     private ArrayList<String> institutePartTime;
     private ArrayList<String> instituteSession;
+    private ArrayList<String> instituteGroup;
+
+    private Elements contents;
 
     public interface OnFinish{
         public void ProcessIsFinish();
@@ -30,6 +34,7 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
         instituteFullTime = new ArrayList<>();
         institutePartTime = new ArrayList<>();
         instituteSession  = new ArrayList<>();
+        instituteGroup    = new ArrayList<>();
 
         finish = null;
     }
@@ -37,7 +42,6 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
     @Override
     protected ArrayList<String> doInBackground(String... strings) {
         Document doc;
-        Elements contents;
 
         try {
             doc = Jsoup.connect(strings[0]).get();
@@ -90,6 +94,21 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
             instituteSession.add(el.text());
     }
 
+    void downloadGroup(int blockIndex, String name){
+        Element block = contents.get(blockIndex);
+        Elements institute = block.select(instituteNames);
+        Elements group = null;
+        for (Element e : institute)
+            if(e.text().equals(name)){
+                group = e.select(courseNames);
+                break;
+            }
+
+        for (Element e : group)
+            instituteGroup.add(e.text());
+
+    }
+
     public ArrayList<String> getInstituteFullTime() {
         return instituteFullTime;
     }
@@ -100,6 +119,10 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
 
     public ArrayList<String> getInstituteSession() {
         return instituteSession;
+    }
+
+    public ArrayList<String> getGroupList() {
+        return instituteGroup;
     }
 
     public void setFinish(OnFinish finish){
