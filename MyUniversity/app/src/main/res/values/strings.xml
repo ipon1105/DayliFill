@@ -40,7 +40,7 @@
         <item>ИПИ</item>
         <item>Аспирантура</item>
     </string-array>
-    
+
     <string-array name="groupList">
         <item>Выбрать группу</item>
         <item>1 группа</item>
@@ -87,6 +87,8 @@
         <item>2 семестр ИБ/б, ИБ/м</item>
         <item>2 семестр ИБ ОЗФО</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
