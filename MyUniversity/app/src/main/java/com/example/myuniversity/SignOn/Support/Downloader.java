@@ -96,6 +96,8 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
 
     public void downloadGroup(int blockIndex, int institutePos){
         instituteGroup.clear();
+        if(contents == null)
+            return;
         Element block = contents.get(blockIndex);
         Elements institute = block.select(instituteContent);
 

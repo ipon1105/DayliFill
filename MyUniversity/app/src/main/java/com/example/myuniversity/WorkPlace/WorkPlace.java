@@ -44,22 +44,35 @@ public class WorkPlace extends AppCompatActivity {
             TabLayout.Tab lastTab;
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()){
-                    case 0: nav.navigate(R.id.action_homeWork_to_schedule); break;
-                    case 1:
+                if (lastTab == null)
+                    lastTab = tab;
 
+                switch (tab.getPosition()){
+                    case 0:
+                        if (lastTab.getPosition() == 1)
+                            nav.navigate(R.id.action_homeWork_to_schedule);
+                        else
+                            nav.navigate(R.id.action_setting_to_schedule);
+                    break;
+                    case 1:
                         if (lastTab.getPosition() == 2)
                             nav.navigate(R.id.action_setting_to_homeWork);
                         else
                             nav.navigate(R.id.action_schedule_to_homeWork);
-                                                                            break;
-                    case 2: nav.navigate(R.id.action_homeWork_to_setting);  break;
+                    break;
+                    case 2:
+                        if (lastTab.getPosition() == 0)
+                            nav.navigate(R.id.action_schedule_to_setting);
+                        else
+                            nav.navigate(R.id.action_homeWork_to_setting);
+                    break;
                 }
+                lastTab = tab;
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                lastTab = tab;
+
             }
 
             @Override
@@ -67,23 +80,7 @@ public class WorkPlace extends AppCompatActivity {
 
             }
         });
-
-        //View.OnClickListener listener = new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View view) {
-        //        switch (view.getId()){
-        //            case R.id.schedule: break;
-        //            case R.id.homework: break;
-        //            case R.id.settingTab: break;
-        //        }
-        //    }
-        //};
-        //findViewById(R.id.schedule).setOnClickListener(listener);
-        //findViewById(R.id.homework).setOnClickListener(listener);
-        //findViewById(R.id.setting).setOnClickListener(listener);
     }
-
-
 
     @SuppressLint("ResourceType")
     @Override
@@ -96,10 +93,4 @@ public class WorkPlace extends AppCompatActivity {
         init();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        //nav = Navigation.findNavController(findViewById(R.id.box));
-    }
 }
