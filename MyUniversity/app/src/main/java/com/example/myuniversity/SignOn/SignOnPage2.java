@@ -1,5 +1,6 @@
 package com.example.myuniversity.SignOn;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,7 @@ public class SignOnPage2 extends Fragment {
     private FragmentSignOnPage2Binding binding;
     private ListItemsAdapter itemsAdapter;
     private ItemClickListener listener;
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,22 +47,44 @@ public class SignOnPage2 extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        context = this.requireContext();
+        Integer blockNum  = ((Integer) getArguments().get("blockNum"));
+        Integer institute = ((Integer) getArguments().get("institute"));
+
+        GridLayoutManager layoutManager = new GridLayoutManager(this.requireContext(), 1);
+        binding.list.setLayoutManager(layoutManager);
+        binding.list.addItemDecoration(new DividerItemDecoration(this.requireContext(),DividerItemDecoration.VERTICAL));
+
         binding.btnNext.setEnabled(false);
+        binding.btnNext.setTextColor(getResources().getColor(R.color.btn_next_off));
 
         final NavController controller = (NavController) Navigation.findNavController(view);
-
         listener = new ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 itemsAdapter.notifyDataSetChanged();
                 binding.btnNext.setEnabled(true);
+                binding.btnNext.setTextColor(getResources().getColor(R.color.btn_next_on));
             }
         };
-        GridLayoutManager layoutManager = new GridLayoutManager(this.getContext(), 1);
+        MainActivity.downloader.setFinish(new Downloader.OnFinish() {
+            @Override
+            public void ProcessIsFinish() {
+                //Загрузка завершена
+                Log.d("debug","finish load data");
+                itemsAdapter = new ListItemsAdapter(context, MainActivity.downloader.getGroupList());
+                itemsAdapter.setClickListener(listener);
+                binding.list.setAdapter(itemsAdapter);
+            }
+        });
 
-        binding.list.setLayoutManager(layoutManager);
-        binding.list.addItemDecoration(new DividerItemDecoration(this.getContext(),DividerItemDecoration.VERTICAL));
-        //binding.list.setAdapter(MainActivity.downloader.);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity.downloader.downloadGroup(blockNum, institute);
+            }
+        }).start();
 
         binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +92,5 @@ public class SignOnPage2 extends Fragment {
                 controller.navigate(R.id.action_signOnPage2_to_signOnPage1);
             }
         });
-        //controller.navigate(R.id.action_signOnPage2_to_signOnPage1);
     }
 }

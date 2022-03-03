@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--
+        Тёмно зелёный и цвет морской волны
+    -->
+
     <color name="whiteOn">#FFFFFFFF</color>
     <color name="whiteOff">#D3D3D3</color>
 

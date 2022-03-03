@@ -94,19 +94,25 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
             instituteSession.add(el.text());
     }
 
-    void downloadGroup(int blockIndex, String name){
+    public void downloadGroup(int blockIndex, int institutePos){
         Element block = contents.get(blockIndex);
         Elements institute = block.select(instituteNames);
-        Elements group = null;
-        for (Element e : institute)
-            if(e.text().equals(name)){
+
+        Elements group = null; int i = -1;
+        for (Element e : institute) {
+            if(++i == institutePos) {
                 group = e.select(courseNames);
                 break;
             }
+        }
+
+        if(group == null)
+            return;
 
         for (Element e : group)
             instituteGroup.add(e.text());
 
+        finish.ProcessIsFinish();
     }
 
     public ArrayList<String> getInstituteFullTime() {

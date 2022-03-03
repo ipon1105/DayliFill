@@ -27,6 +27,7 @@ public class SignOnPage1 extends Fragment {
     private ListItemsAdapter itemsAdapter;
     private ItemClickListener listener;
     private int index = R.id.btnFullTime;
+    private int instituteIndex = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class SignOnPage1 extends Fragment {
         listener = new ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                instituteIndex = position;
                 itemsAdapter.notifyDataSetChanged();
                 binding.btnNext.setEnabled(true);
                 binding.btnNext.setTextColor(getResources().getColor(R.color.btn_next_on));
@@ -103,7 +105,13 @@ public class SignOnPage1 extends Fragment {
         binding.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                controller.navigate(R.id.action_signOnPage1_to_signOnPage2);
+                int block = (index == R.id.btnFullTime ? 0 : (index == R.id.btnPartTime ? 1 : 2));
+                Bundle bundle = new Bundle();
+
+                bundle.putInt("blockNum", block);
+                bundle.putInt("institute", instituteIndex);
+
+                controller.navigate(R.id.action_signOnPage1_to_signOnPage2, bundle);
             }
         });
         myClick(null);
