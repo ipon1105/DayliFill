@@ -75,4 +75,8 @@ public class ListItemsAdapter extends RecyclerView.Adapter<ListItemsAdapter.View
         listener = itemClickListener;
     }
 
+    public void clear(){
+        list.clear();
+        notifyDataSetChanged();
+    }
 }

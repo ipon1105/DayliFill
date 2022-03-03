@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
     private final String instituteBlocks = ".su-column-content";
     private final String instituteNames = ".su-spoiler-title";
-    private final String courseNames = ".su-spoiler-content su-clearfix";
+    private final String instituteContent = ".su-spoiler-content.su-clearfix";
 
     private ArrayList<String> instituteFullTime;
     private ArrayList<String> institutePartTime;
@@ -95,22 +95,20 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
     }
 
     public void downloadGroup(int blockIndex, int institutePos){
+        instituteGroup.clear();
         Element block = contents.get(blockIndex);
-        Elements institute = block.select(instituteNames);
+        Elements institute = block.select(instituteContent);
 
-        Elements group = null; int i = -1;
-        for (Element e : institute) {
-            if(++i == institutePos) {
-                group = e.select(courseNames);
-                break;
-            }
-        }
-
-        if(group == null)
+        if(institute == null)
             return;
 
-        for (Element e : group)
+        for (Element e : institute.get(institutePos).getElementsByTag("a")) {
+            if (e.text().equals("") ||
+                e.text().equals(" ")||
+                e.text() == null
+            ) continue;
             instituteGroup.add(e.text());
+        }
 
         finish.ProcessIsFinish();
     }

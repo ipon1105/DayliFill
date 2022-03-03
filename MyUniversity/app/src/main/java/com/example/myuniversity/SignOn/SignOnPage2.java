@@ -3,6 +3,7 @@ package com.example.myuniversity.SignOn;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -72,7 +73,6 @@ public class SignOnPage2 extends Fragment {
             @Override
             public void ProcessIsFinish() {
                 //Загрузка завершена
-                Log.d("debug","finish load data");
                 itemsAdapter = new ListItemsAdapter(context, MainActivity.downloader.getGroupList());
                 itemsAdapter.setClickListener(listener);
                 binding.list.setAdapter(itemsAdapter);
@@ -89,8 +89,11 @@ public class SignOnPage2 extends Fragment {
         binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(itemsAdapter != null) itemsAdapter.clear();
                 controller.navigate(R.id.action_signOnPage2_to_signOnPage1);
             }
         });
     }
+
+
 }
