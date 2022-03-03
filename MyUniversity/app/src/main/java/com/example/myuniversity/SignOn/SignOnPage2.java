@@ -1,6 +1,7 @@
 package com.example.myuniversity.SignOn;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -23,6 +24,7 @@ import com.example.myuniversity.R;
 import com.example.myuniversity.SignOn.Support.Downloader;
 import com.example.myuniversity.SignOn.Support.ItemClickListener;
 import com.example.myuniversity.SignOn.Support.ListItemsAdapter;
+import com.example.myuniversity.WorkPlace.WorkPlace;
 import com.example.myuniversity.databinding.FragmentSignOnPage1Binding;
 import com.example.myuniversity.databinding.FragmentSignOnPage2Binding;
 
@@ -91,6 +93,13 @@ public class SignOnPage2 extends Fragment {
             public void onClick(View view) {
                 if(itemsAdapter != null) itemsAdapter.clear();
                 controller.navigate(R.id.action_signOnPage2_to_signOnPage1);
+            }
+        });
+        binding.btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, WorkPlace.class);
+                startActivity(intent);
             }
         });
     }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_work_place"
+    app:startDestination="@id/schedule">
+
+    <fragment
+        android:id="@+id/schedule"
+        android:name="com.example.myuniversity.WorkPlace.Schedule"
+        android:label="fragment_schedule"
+        tools:layout="@layout/fragment_schedule" >
+        <action
+            android:id="@+id/action_schedule_to_homeWork"
+            app:destination="@id/homework" />
+    </fragment>
+    <fragment
+        android:id="@+id/homework"
+        android:name="com.example.myuniversity.WorkPlace.HomeWork"
+        android:label="fragment_home_work"
+        tools:layout="@layout/fragment_home_work" >
+        <action
+            android:id="@+id/action_homeWork_to_setting"
+            app:destination="@id/settingTab" />
+        <action
+            android:id="@+id/action_homeWork_to_schedule"
+            app:destination="@id/schedule" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingTab"
+        android:name="com.example.myuniversity.WorkPlace.Setting"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_setting_to_homeWork"
+            app:destination="@id/homework" />
+    </fragment>
+    <activity
+        android:id="@+id/workPlace"
+        android:name="com.example.myuniversity.WorkPlace.WorkPlace"
+        android:label="activity_work_place"
+        tools:layout="@layout/activity_work_place" />
+</navigation>
