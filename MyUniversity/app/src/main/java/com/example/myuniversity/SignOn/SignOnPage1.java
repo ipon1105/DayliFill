@@ -50,6 +50,7 @@ public class SignOnPage1 extends Fragment {
             public void onItemClick(View view, int position) {
                 itemsAdapter.notifyDataSetChanged();
                 binding.btnNext.setEnabled(true);
+                binding.btnNext.setTextColor(getResources().getColor(R.color.btn_next_on));
             }
         };
         GridLayoutManager layoutManager = new GridLayoutManager(this.getContext(), 1);
@@ -58,6 +59,7 @@ public class SignOnPage1 extends Fragment {
         binding.list.addItemDecoration(new DividerItemDecoration(this.getContext(),DividerItemDecoration.VERTICAL));
 
         binding.btnNext.setEnabled(false);
+        binding.btnNext.setTextColor(getResources().getColor(R.color.btn_next_off));
 
         MainActivity.downloader.setFinish(new Downloader.OnFinish() {
             @Override
@@ -110,12 +112,14 @@ public class SignOnPage1 extends Fragment {
 
     public void myClick(View view){
         binding.btnNext.setEnabled(false);
+        binding.btnNext.setTextColor(getResources().getColor(R.color.btn_next_off));
+
         if(view != null)
             index = view.getId();
 
-        binding.btnFullTime.setTextColor(getResources().getColor((index == R.id.btnFullTime ? R.color.whiteOn : R.color.whiteOff)));
-        binding.btnPartTime.setTextColor(getResources().getColor((index == R.id.btnPartTime ? R.color.whiteOn : R.color.whiteOff)));
-        binding.btnSession.setTextColor(getResources().getColor((index == R.id.btnSession ? R.color.whiteOn : R.color.whiteOff)));
+        binding.btnFullTime.setTextColor(getResources().getColor((index == R.id.btnFullTime ? R.color.toggle_on : R.color.toggle_off)));
+        binding.btnPartTime.setTextColor(getResources().getColor((index == R.id.btnPartTime ? R.color.toggle_on : R.color.toggle_off)));
+        binding.btnSession.setTextColor(getResources().getColor((index == R.id.btnSession ? R.color.toggle_on : R.color.toggle_off)));
 
         if(index == R.id.btnFullTime)
             itemsAdapter = new ListItemsAdapter(this.getContext(), MainActivity.downloader.getInstituteFullTime());

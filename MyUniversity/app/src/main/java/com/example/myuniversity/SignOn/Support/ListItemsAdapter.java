@@ -40,7 +40,7 @@ public class ListItemsAdapter extends RecyclerView.Adapter<ListItemsAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ListItemsAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.itemName.setText(list.get(position).name);
-        holder.itemName.setTextColor(context.getResources().getColor(list.get(position).set ? R.color.full_green : R.color.white));
+        holder.itemName.setTextColor(context.getResources().getColor(list.get(position).set ? R.color.item_select : R.color.item_row));
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
