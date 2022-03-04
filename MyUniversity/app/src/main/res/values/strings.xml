@@ -20,8 +20,50 @@
     <string name="scheduleTab">Расписание</string>
     <string name="homeWorkTab">Домашка</string>
     <string name="settingsTab">Настройки</string>
-    
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!-- element_day && element_pair-->
+    <string-array name="weekDaysRus">
+        <item>Понедельник</item>
+        <item>Вторник</item>
+        <item>Среда</item>
+        <item>Четверг</item>
+        <item>Пятница</item>
+        <item>Суббота</item>
+    </string-array>
+    <string-array name="numbers">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+    <string-array name="times">
+        <item>8:30</item>
+        <item>10:00</item>
+        <item>10:10</item>
+        <item>11:40</item>
+        <item>11:50</item>
+        <item>13:20</item>
+        <item>14:00</item>
+        <item>15:30</item>
+        <item>15:40</item>
+        <item>17:10</item>
+        <item>17:20</item>
+        <item>18:50</item>
+        <item>19:00</item>
+        <item>20:30</item>
+        <item>20:40</item>
+        <item>22:10</item>
+    </string-array>
+
+    <!-- Временные данные -->
+    <string name="num">№ </string>
+    <string name="timeA">TimeA</string>
+    <string name="timeB">TimeB</string>
+    <string name="Pair">Pair </string>
+    <string name="Audit">Audit</string>
 
 </resources>

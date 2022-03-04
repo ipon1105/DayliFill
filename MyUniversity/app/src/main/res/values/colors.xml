@@ -25,6 +25,14 @@
     <color name="btn_back_on">#FFFFFF</color>
     <color name="btn_back_off">#D3D3D3</color>
 
+    <!-- Элемент таблицы -->
+    <color name="txtTitleTable">#FFFFFF</color>
+    <color name="backTitleTable">#00B6FF</color>
+    <color name="backOtt">#C6C6C6</color>
+    <color name="backEven">#FFFFFF</color>
+    <color name="txtTableFirst">#000000</color>
+    <color name="txtTableSecond">#919191</color>
+
     <!-- Системные цвета -->
     <color name="colorPrimary_night">#FFBB86FC</color>
     <color name="colorPrimary">#FF6200EE</color>
