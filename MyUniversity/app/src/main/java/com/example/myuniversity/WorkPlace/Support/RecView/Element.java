@@ -1,4 +1,4 @@
-package com.example.myuniversity.WorkPlace.Support;
+package com.example.myuniversity.WorkPlace.Support.RecView;
 
 public class Element {
     private String pairIndex;

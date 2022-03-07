@@ -98,6 +98,12 @@ public class SignOnPage2 extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, WorkPlace.class);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("url", MainActivity.downloader.getUrlList().get(institute));
+
+                intent.putExtras(bundle);
+
                 startActivity(intent);
             }
         });

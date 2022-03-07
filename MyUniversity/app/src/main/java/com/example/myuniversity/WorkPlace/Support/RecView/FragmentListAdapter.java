@@ -1,6 +1,7 @@
-package com.example.myuniversity.WorkPlace.Support;
+package com.example.myuniversity.WorkPlace.Support.RecView;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,11 @@ public class FragmentListAdapter extends RecyclerView.Adapter<FragmentListAdapte
     private String times[];
 
     public FragmentListAdapter(ArrayList<Day> list, Context context){
+        Log.i(String.valueOf(Log.INFO),"Create new Days with " + String.valueOf(list.size()) +" size;");
+        for(int i = 0; i < list.size(); i++){
+            Log.i(String.valueOf(Log.INFO),"Day " + list.get(i).getDay() +" have " + list.get(i).getElementList().size() + "elements;");
+
+        }
         this.list = list;
 
         this.numbers = context.getResources().getStringArray(R.array.numbers);

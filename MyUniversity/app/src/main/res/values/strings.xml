@@ -65,5 +65,6 @@
     <string name="timeB">TimeB</string>
     <string name="Pair">Pair </string>
     <string name="Audit">Audit</string>
+    <string name="groupTitle">Группа</string>
 
 </resources>

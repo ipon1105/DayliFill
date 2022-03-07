@@ -1,8 +1,7 @@
-package com.example.myuniversity.WorkPlace.Support;
+package com.example.myuniversity.WorkPlace.Support.RecView;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +22,10 @@ public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.
     private String times[];
 
     public ElementListAdapter(ArrayList<Element> list, String numbers[], String times[]){
+        Log.i(String.valueOf(Log.INFO),"Create new Elements with " + String.valueOf(list.size()) +" size;");
         this.list = list;
         this.numbers = numbers;
         this.times   = times;
-
     }
 
     @NonNull
@@ -45,7 +44,7 @@ public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.
         holder.pair.setText(list.get(position).getPairIndex());
         holder.audit.setText(list.get(position).getAuditIndex());
 
-        int color = ((position % 2 == 0) ? R.color.txtTableFirst : R.color.txtTableSecond);
+        int color = ((position % 2 == 0) ? R.color.backOtt : R.color.backEven);
 
         holder.numBox.setBackgroundColor(holder.view.getContext().getColor(color));
         holder.timeBox.setBackgroundColor(holder.view.getContext().getColor(color));
@@ -91,6 +90,6 @@ public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.
     }
 
     public void clear(){
-        notifyDataSetChanged();
+        list.clear();
     }
 }

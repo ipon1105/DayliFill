@@ -1,6 +1,7 @@
 package com.example.myuniversity.SignOn.Support;
 
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -23,6 +24,7 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
     private ArrayList<String> instituteGroup;
 
     private Elements contents;
+    private ArrayList<String> urlList;
 
     public interface OnFinish{
         public void ProcessIsFinish();
@@ -35,6 +37,7 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
         institutePartTime = new ArrayList<>();
         instituteSession  = new ArrayList<>();
         instituteGroup    = new ArrayList<>();
+        urlList           = new ArrayList<>();
 
         finish = null;
     }
@@ -110,6 +113,7 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
                 e.text() == null
             ) continue;
             instituteGroup.add(e.text());
+            urlList.add(e.attr("href"));
         }
 
         finish.ProcessIsFinish();
@@ -130,6 +134,8 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
     public ArrayList<String> getGroupList() {
         return instituteGroup;
     }
+
+    public ArrayList<String> getUrlList() { return urlList; }
 
     public void setFinish(OnFinish finish){
         this.finish = finish;

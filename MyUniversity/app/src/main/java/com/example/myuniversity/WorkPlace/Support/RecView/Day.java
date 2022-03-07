@@ -1,4 +1,4 @@
-package com.example.myuniversity.WorkPlace.Support;
+package com.example.myuniversity.WorkPlace.Support.RecView;
 
 import java.util.ArrayList;
 

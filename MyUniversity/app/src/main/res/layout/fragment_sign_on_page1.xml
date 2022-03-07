@@ -20,7 +20,8 @@
         android:textOn="@string/FullTimeRu"
         app:layout_constraintBottom_toBottomOf="@+id/btnPartTime"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnPartTime" />
+        app:layout_constraintTop_toTopOf="@+id/btnPartTime"
+        tools:ignore="DuplicateClickableBoundsCheck" />
 
     <ToggleButton
         android:id="@+id/btnPartTime"

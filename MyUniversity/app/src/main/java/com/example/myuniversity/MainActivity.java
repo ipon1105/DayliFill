@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -20,13 +21,11 @@ import com.example.myuniversity.SignOn.Support.ListItemsAdapter;
 public class MainActivity extends AppCompatActivity {
     //Для анимации переходов между nav_graph https://habr.com/ru/company/funcorp/blog/521340/
     public static Downloader downloader;
+    public static SharedPreferences sPref;
+    final String INSTITUTE_NAME = "INSTITUTE_NAME";
+    final String INSTITUTE_HREF = "INSTITUTE_HREF";
 
-    @SuppressLint("WrongThread")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+    private void fullscreen(){
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
@@ -34,12 +33,23 @@ public class MainActivity extends AppCompatActivity {
         if(Build.VERSION.SDK_INT >= 19){
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
             );
         }
+    }
+
+    @SuppressLint("WrongThread")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        sPref = getPreferences(MODE_PRIVATE);
+
+        fullscreen();
+
         downloader = new Downloader();
         downloader.execute("https://www.sevsu.ru/univers/shedule");
-
     }
 
 
