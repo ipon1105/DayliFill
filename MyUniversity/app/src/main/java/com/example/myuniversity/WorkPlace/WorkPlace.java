@@ -31,6 +31,12 @@ import java.io.IOException;
 import java.net.URL;
 
 public class WorkPlace extends AppCompatActivity {
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     private NavController nav;
     private ActivityWorkPlaceBinding binding;
     private String url;
@@ -97,9 +103,33 @@ public class WorkPlace extends AppCompatActivity {
         });
         Log.d("debug", "https://www.sevsu.ru" + url);
         WorkPlace.verifyStoragePermissions(this);
-
         File f = new File(Environment.getExternalStorageDirectory() + "/Download/schedule.xls");
-        new LoadFile("https://www.sevsu.ru" + url, f).start();
+
+        new FileLoadingTask(
+            "https://www.sevsu.ru" + url,
+                f,
+            new FileLoadingListener() {
+                @Override
+                public void onBegin() {
+                    Log.d("debug","Begin");
+                }
+
+                @Override
+                public void onSuccess() {
+                    Log.d("debug","Success");
+                }
+
+                @Override
+                public void onFailure(Throwable cause) {
+                    Log.d("debug","Fail: ", cause);
+                }
+
+                @Override
+                public void onEnd() {
+                    Log.d("debug","End");
+                }
+            }
+        ).execute();
     }
 
     @SuppressLint("ResourceType")
@@ -115,33 +145,6 @@ public class WorkPlace extends AppCompatActivity {
         fullscreen();
         init();
     }
-
-    private class LoadFile extends Thread {
-        private final String src;
-        private final File dest;
-
-        LoadFile(String src, File dest) {
-            this.src = src;
-            this.dest = dest;
-        }
-
-        @Override
-        public void run() {
-            Log.d("debug", "START");
-            try {
-                FileUtils.copyURLToFile(new URL(src), dest);
-                Log.d("debug", "GOOD");
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d("debug", "FAIL: ", e);
-            }
-        }
-    }
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
 
     public static void verifyStoragePermissions(Activity activity) {
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
