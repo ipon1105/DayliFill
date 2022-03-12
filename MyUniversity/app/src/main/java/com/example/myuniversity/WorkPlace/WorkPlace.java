@@ -19,16 +19,27 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.example.myuniversity.R;
+import com.example.myuniversity.WorkPlace.Support.Excel.ExcelManager;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingTask;
 import com.example.myuniversity.databinding.ActivityWorkPlaceBinding;
 import com.google.android.material.tabs.TabLayout;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.formula.functions.Column;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Iterator;
 
 public class WorkPlace extends AppCompatActivity {
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -54,6 +65,9 @@ public class WorkPlace extends AppCompatActivity {
             );
         }
     }
+
+    //Чтение данных их файла
+
 
     //Инициализация
     private void init(){
@@ -117,6 +131,7 @@ public class WorkPlace extends AppCompatActivity {
                 @Override
                 public void onSuccess() {
                     Log.d("debug","Success");
+                    new ExcelManager().ReadXLSX(f);
                 }
 
                 @Override
@@ -130,6 +145,8 @@ public class WorkPlace extends AppCompatActivity {
                 }
             }
         ).execute();
+
+        
     }
 
     @SuppressLint("ResourceType")
