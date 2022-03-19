@@ -18,13 +18,13 @@ import java.util.ArrayList;
 
 public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.ViewHolder> {
     private ArrayList<Element> list;
-    private String numbers[];
+    private int numbers;
     private String times[];
 
-    public ElementListAdapter(ArrayList<Element> list, String numbers[], String times[]){
+    public ElementListAdapter(ArrayList<Element> list, String times[]){
         Log.i(String.valueOf(Log.INFO),"Create new Elements with " + String.valueOf(list.size()) +" size;");
         this.list = list;
-        this.numbers = numbers;
+        this.numbers = 1;
         this.times   = times;
     }
 
@@ -38,9 +38,13 @@ public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.num.setText(numbers[position]);
-        holder.timeA.setText(times[2 * position]);
-        holder.timeB.setText(times[2 * position + 1]);
+        holder.num.setText(String.valueOf(numbers++));
+        holder.timeA.setText(String.valueOf(2 * numbers));
+        holder.timeB.setText(String.valueOf(2 * numbers + 1));
+        if(position < 8){
+            holder.timeA.setText(times[2 * position]);
+            holder.timeB.setText(times[2 * position + 1]);
+        }
         holder.pair.setText(list.get(position).getPairIndex());
         holder.audit.setText(list.get(position).getAuditIndex());
 

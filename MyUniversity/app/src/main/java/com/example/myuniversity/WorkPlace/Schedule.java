@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.myuniversity.WorkPlace.Support.Excel.ExcelManager;
+import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
 import com.example.myuniversity.WorkPlace.Support.RecView.Day;
 import com.example.myuniversity.WorkPlace.Support.RecView.Element;
 import com.example.myuniversity.WorkPlace.Support.RecView.FragmentListAdapter;
@@ -24,7 +26,8 @@ import com.example.myuniversity.databinding.FragmentScheduleBinding;
 import java.util.ArrayList;
 
 public class Schedule extends Fragment {
-    FragmentScheduleBinding binding;
+    private FragmentScheduleBinding binding;
+    private ExcelManager manager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,16 @@ public class Schedule extends Fragment {
     }
 
     private void init(){
+        try {
+            manager = (ExcelManager) getArguments().getSerializable("manager");
+
+            binding.fragmentList.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
+            binding.fragmentList.setAdapter(new FragmentListAdapter(manager.getDays(), binding.getRoot().getContext()));
+        }catch (Exception e){
+            Log.d("Schedule", "Error: ", e);
+        }
+
+        /*
         ArrayList<Element> monday = new ArrayList<>();
         monday.add(new Element("", ""));
         monday.add(new Element("", ""));
@@ -114,10 +127,6 @@ public class Schedule extends Fragment {
         days.add(new Day("Четверг", thursday));
         days.add(new Day("Пятница", friday));
         days.add(new Day("Суббота", saturday));
-
-        binding.fragmentList.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
-        binding.fragmentList.setAdapter(new FragmentListAdapter(days, binding.getRoot().getContext()));
+        */
     }
-
-
 }

@@ -44,7 +44,7 @@ public class FragmentListAdapter extends RecyclerView.Adapter<FragmentListAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.titleName.setText(list.get(position).getDay());
-        holder.list.setAdapter(new ElementListAdapter(list.get(position).getElementList(), numbers, times));
+        holder.list.setAdapter(new ElementListAdapter(list.get(position).getElementList(), times));
     }
 
     @Override

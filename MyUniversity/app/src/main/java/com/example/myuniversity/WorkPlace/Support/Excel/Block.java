@@ -1,43 +1,29 @@
 package com.example.myuniversity.WorkPlace.Support.Excel;
 
+import java.util.ArrayList;
+
 public class Block {
-    private final int ROW_INDEX_START = 9;
-    private final int ROW_INDEX_STOP = 57;
+    private ArrayList<Group> groupList;
 
-    private String name;
-    private int cellStart;
-    private int cellStop;
-
-    public Block(String name, int cellStart, int cellStop) {
-        this.name = name;
-        this.cellStart = cellStart;
-        this.cellStop = cellStop;
+    public Block(ArrayList<Group> groupList) {
+        this.groupList = groupList;
     }
 
-    public int getCellStart() {
-        return cellStart;
+    public ArrayList<Group> getGroupList() {
+        return groupList;
     }
 
-    public void setCellStart(int cellStart) {
-        this.cellStart = cellStart;
-    }
-
-    public int getCellStop() {
-        return cellStop;
-    }
-
-    public void setCellStop(int cellStop) {
-        this.cellStop = cellStop;
+    public void setGroupList(ArrayList<Group> groupList) {
+        this.groupList = groupList;
     }
 
     @Override
     public String toString() {
-        return "Block{" +
-                "ROW_INDEX_START=" + ROW_INDEX_START +
-                ", ROW_INDEX_STOP=" + ROW_INDEX_STOP +
-                ", name='" + name + '\'' +
-                ", cellStart=" + cellStart +
-                ", cellStop=" + cellStop +
-                '}';
+        String answer = "\nBlock{";
+
+        for(int i = 0; i < groupList.size(); i++)
+            answer += "\n" + String.valueOf(i) + ": " + groupList.get(i).toString();
+
+        return answer + "\n}";
     }
 }

@@ -53,6 +53,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/settingsTab" />
         </com.google.android.material.tabs.TabLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.fragment.app.FragmentContainerView

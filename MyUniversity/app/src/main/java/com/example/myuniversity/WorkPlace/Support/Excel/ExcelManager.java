@@ -2,98 +2,204 @@ package com.example.myuniversity.WorkPlace.Support.Excel;
 
 import android.util.Log;
 
+import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
+import com.example.myuniversity.WorkPlace.Support.RecView.Day;
+import com.example.myuniversity.WorkPlace.Support.RecView.Element;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Locale;
 
-public class ExcelManager {
-    private ArrayList<Block> blockList;
+/*
+* Дополнительные ошибки:
+* SignOnPage2.java Строчка №81 Неоригинальный поток для UI
+*/
 
-    public ExcelManager() {
-        blockList = new ArrayList<Block>();
+/*
+* Ошибки при работе алгоритма
+* №1 -> Интститут Информацонных технологий и управления в технических системах;
+* Проблема -> Sheet(ИС 4к,маг) не заполняется потому что высота выше строки
+* понедельник не 1, а 2.
+* №2 -> Юридический институт;
+* Проблема -> ЮИ ОЗФО, хайл не найден, про причине отсутсвия на сайте
+* Для решения необходимо обработать исключение
+*/
+
+public class ExcelManager implements Serializable {
+    private ArrayList<SheetBlock> sheetList;
+    private File file;
+    private Boolean isXLS;
+    private Boolean isFinish;
+    private FileLoadingListener fileLoadingListener;
+
+    public ExcelManager(File file, FileLoadingListener fileLoadingListener) {
+        this.fileLoadingListener = fileLoadingListener;
+        this.isFinish = false;
+        this.file = file;
+        isFinish = false;
     }
 
-    public void SearchBlocks(XSSFWorkbook book){
-        XSSFSheet sheet = book.getSheetAt(0);
-        Row row = sheet.getRow(9);
-        Cell cell = null;
-        String name;
+    public void startLoad(){
+        isFinish = false;
+        fileLoadingListener.onBegin();
+        Log.i("ExcelManager", "Start Constructor with File = " + file.getAbsolutePath() + ".");
 
-        for(int i = 4; i < row.getPhysicalNumberOfCells(); i++){
-            cell = row.getCell(i);
+        sheetList = new ArrayList<>();
 
-            name = cell.getStringCellValue();
-            if(!name.equals("") && !name.equals("Время"))
-                blockList.add(new Block(name, i, i + 3));
-
-        }
-
-        for(int i = 0; i < blockList.size(); i++)
-            Log.d("debug", "block " + String.valueOf(i) + ": " + blockList.get(i).toString());
-    }
-
-    //Чтение данных их файла
-    public void ReadXLSX(File path) {
-        Log.d("debug","Start read Excel");
+        String fileName = file.getName();
+        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+            isXLS = fileName.substring(fileName.lastIndexOf(".")+1).equals("xls");
 
         try {
-            XSSFWorkbook myWorkBook = new XSSFWorkbook(path);
 
-            SearchBlocks(myWorkBook);
+            if(isXLS){
+                Log.i("ExcelManager", "Work with xls file.");
 
-            //Row row = null;
-            //Cell cell = null;
-            //for (int i = 9; i < 58; i++){
-            //    row = sheet.getRow(i);
-            //}
-            //Log.d("debug", "row Count = " + String.valueOf(row.getPhysicalNumberOfCells()));
+                Workbook book = WorkbookFactory.create(file);
+                for(int i = 0; i < book.getNumberOfSheets(); i++)
+                    fillSheetList(book.getSheetAt(i));
 
-            //Log.d("debug", "cell = " + cell.getStringCellValue());
+                for(int i = 0; i < sheetList.size(); i++){
+                    Log.i("ExcelManager", sheetList.get(i).toString(i));
+                }
 
-            /*
-            Log.d("debug", "Info:");
-            Log.d("debug", "\tFile have " + String.valueOf(myWorkBook.getNumberOfSheets()) + " sheets.");
-            for(int i = 0; i < myWorkBook.getNumberOfSheets(); i++)
-            {
-                sheet = myWorkBook.getSheetAt(i);
-                Log.d("debug", "\t" + String.valueOf(i) + " sheet have name = " + sheet.getSheetName() + ".");
-            }
+            } else {
+                Log.i("ExcelManager", "Work with xlsx file.");
 
-            XSSFSheet mySheet = myWorkBook.getSheetAt(0);
-            Iterator<Row> rowIterator = mySheet.iterator();
-            while (rowIterator.hasNext()) {
-                Row row = rowIterator.next();
-                Iterator<Cell> cellIterator = row.cellIterator();
-                while (cellIterator.hasNext()) {
-                    Cell cell = cellIterator.next();
-                    switch (cell.getCellType()) {
-                        case Cell.CELL_TYPE_STRING:
-                            break;
-                        case Cell.CELL_TYPE_NUMERIC:
-                            break;
-                        case Cell.CELL_TYPE_BOOLEAN:
-                            break;
-                        default:
-                    }
-                    //printlnToUser(cell);
+                XSSFWorkbook book = new XSSFWorkbook(file);
+                for(int i = 0; i < book.getNumberOfSheets(); i++)
+                    fillSheetList(book.getSheetAt(i));
+
+                for(int i = 0; i < sheetList.size(); i++){
+                    Log.i("ExcelManager", sheetList.get(i).toString(i));
                 }
             }
-            */
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+
         } catch (InvalidFormatException e) {
-            Log.d("debug", "Error File Format: ", e);
+            Log.e("ExcelManager", "Error format = ", e);
+            fileLoadingListener.onFailure(e);
+        } catch (IOException e) {
+            Log.e("ExcelManager", "IOException exception = ", e);
+            fileLoadingListener.onFailure(e);
+        }
+        Log.i("ExcelManager", "Stop Constructor.");
+        this.isFinish = true;
+
+        isFinish = true;
+        fileLoadingListener.onSuccess();
+        fileLoadingListener.onEnd();
+    }
+
+    private void fillSheetList(Sheet sheet){
+        Log.i("ExcelManager", "Start fill sheet list = " + sheet.getSheetName() + ".");
+
+        ArrayList<Block> blockList = new ArrayList<>();
+        ArrayList<Group> groupList = new ArrayList<>();
+        ArrayList<Group> tempList = new ArrayList<>();
+
+        Row row = null;
+        Cell cell = null;
+        int start = -1, stop, i, j;
+        String name;
+
+        for(j = 0; j < 10; j++)
+            for(i = 0; i < 20; i++){
+                if ((row = sheet.getRow(i)) == null || (cell = row.getCell(j)) == null)
+                    continue;
+
+                if (cell.getCellType() == cell.CELL_TYPE_STRING &&
+                   !cell.getStringCellValue().equals("") &&
+                   cell.getStringCellValue().toLowerCase().equals("понедельник"))
+                {
+                    Log.d("ExcelManager", "find Left Right angle in " + String.valueOf(i) + "; (index="+String.valueOf(i-1)+").");
+                    start = i - 1; j = 10;
+                    row = sheet.getRow(start);
+                    break;
+                }
+            }
+
+        if (start == -1){
+            Log.d("ExcelManager", "Not find start. Maybe old file format;");
+            return;
         }
 
-        Log.d("debug","Stop read Excel");
+
+        for(i = 0; i < row.getPhysicalNumberOfCells(); i++){
+            cell = row.getCell(i);
+
+            if (cell != null && cell.getCellType() == cell.CELL_TYPE_STRING)
+                name = cell.getStringCellValue();
+            else continue;
+
+            if(name.equals("") || name.equals("Время") || name.toLowerCase(Locale.ROOT).equals("понедельник"))
+                continue;
+
+            groupList.add(new Group(cell.getStringCellValue(), i));
+        }
+
+        if(groupList.size() == 0) {
+            Log.d("ExcelManager", "Error");
+            Log.i("ExcelManager", "Stop fill sheet list.");
+            sheetList.add(new SheetBlock(sheet.getSheetName()));
+            return;
+        }
+
+        start = 0; stop = 0;
+        for(i = 0; i < groupList.size() - 1; i++) {
+
+            if (groupList.get(i + 1).getCellStart() - groupList.get(i).getCellStart() > 4)
+                stop = i + 1;
+            else continue;
+
+            for(Group g : groupList.subList(start, stop))
+                tempList.add(g);
+
+            blockList.add(new Block((ArrayList<Group>) tempList.clone()));
+            tempList.clear();
+            start = stop;
+        }
+
+        if(start <= stop) {
+            for(Group g : groupList.subList(start, groupList.size()))
+                tempList.add(g);
+
+            blockList.add(new Block((ArrayList<Group>) tempList.clone()));
+            tempList.clear();
+        }
+
+        for(i = 0; i < blockList.size(); i++)
+            Log.d("debug", String.valueOf(i) + " " + blockList.get(i).toString());
+
+        sheetList.add(new SheetBlock(sheet.getSheetName(), blockList));
+        Log.i("ExcelManager", "Stop fill sheet list.");
+    }
+
+    public ArrayList<Day> getDays(){
+        ArrayList<Day> days = new ArrayList<>();
+        ArrayList<Element> elements = new ArrayList<>();
+
+        for(int i = 0; i < sheetList.size(); i++){
+            if(sheetList.get(i).getBlockList() != null)
+            for(int j = 0; j < sheetList.get(i).getBlockList().size(); j++)
+                for(int k = 0; k < sheetList.get(i).getBlockList().get(j).getGroupList().size(); k++)
+                    elements.add(new Element(sheetList.get(i).getBlockList().get(j).getGroupList().get(k).getName(),"0"));
+
+            days.add(new Day(sheetList.get(i).getSheetName(), (ArrayList<Element>) elements.clone()));
+            elements.clear();
+        }
+
+        return days;
     }
 }

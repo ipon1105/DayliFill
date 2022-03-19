@@ -28,15 +28,26 @@ import com.example.myuniversity.WorkPlace.WorkPlace;
 import com.example.myuniversity.databinding.FragmentSignOnPage1Binding;
 import com.example.myuniversity.databinding.FragmentSignOnPage2Binding;
 
+import java.util.ArrayList;
+
 public class SignOnPage2 extends Fragment {
     private FragmentSignOnPage2Binding binding;
     private ListItemsAdapter itemsAdapter;
     private ItemClickListener listener;
     private Context context;
+    private int pos = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override
@@ -50,6 +61,7 @@ public class SignOnPage2 extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        final String[] urle = {""};
         context = this.requireContext();
         Integer blockNum  = ((Integer) getArguments().get("blockNum"));
         Integer institute = ((Integer) getArguments().get("institute"));
@@ -65,6 +77,7 @@ public class SignOnPage2 extends Fragment {
         listener = new ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                pos = position;
                 itemsAdapter.notifyDataSetChanged();
                 binding.btnNext.setEnabled(true);
                 binding.btnNext.setTextColor(getResources().getColor(R.color.btn_next_on));
@@ -76,7 +89,14 @@ public class SignOnPage2 extends Fragment {
                 //Загрузка завершена
                 itemsAdapter = new ListItemsAdapter(context, MainActivity.downloader.getGroupList());
                 itemsAdapter.setClickListener(listener);
-                binding.list.setAdapter(itemsAdapter);
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.list.setAdapter(itemsAdapter);
+                    }
+                });
+
+                //Строчка №81 Неоригинальный поток для UI
             }
         });
 
@@ -90,6 +110,7 @@ public class SignOnPage2 extends Fragment {
         binding.btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //controller.
                 if(itemsAdapter != null) itemsAdapter.clear();
                 controller.navigate(R.id.action_signOnPage2_to_signOnPage1);
             }
@@ -100,12 +121,34 @@ public class SignOnPage2 extends Fragment {
                 Intent intent = new Intent(context, WorkPlace.class);
 
                 Bundle bundle = new Bundle();
-                bundle.putString("url", MainActivity.downloader.getUrlList().get(institute));
+                urle[0] = MainActivity.downloader.getUrlPos(pos);
+                bundle.putString("url", urle[0]);
 
                 intent.putExtras(bundle);
 
                 startActivity(intent);
             }
         });
+
     }
+
+
 }
+
+//   Настроить формат обучений
+// Старый формат    Новый формат
+//
+
+//
+//  Выберите неделёт:
+//  <Список таблиц>
+//
+//
+
+//  Выберите таблицу для Чёт:
+//  <Список таблиц>
+//
+//  Выберите таблицу для неЧет:
+//  <Список таблиц>
+//
+

@@ -38,6 +38,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Iterator;
 
@@ -51,6 +52,12 @@ public class WorkPlace extends AppCompatActivity {
     private NavController nav;
     private ActivityWorkPlaceBinding binding;
     private String url;
+
+    private static ExcelManager manager;
+    public static ExcelManager getManager(){
+        return manager;
+    }
+
 
     //Настройка окна
     private void fullscreen(){
@@ -115,9 +122,10 @@ public class WorkPlace extends AppCompatActivity {
 
             }
         });
-        Log.d("debug", "https://www.sevsu.ru" + url);
         WorkPlace.verifyStoragePermissions(this);
-        File f = new File(Environment.getExternalStorageDirectory() + "/Download/schedule.xls");
+
+        Log.d("debug", "https://www.sevsu.ru" + url);
+        File f = new File(Environment.getExternalStorageDirectory() + "/Download/MyUniversity/" + new File(url).getName());
 
         new FileLoadingTask(
             "https://www.sevsu.ru" + url,
@@ -131,7 +139,34 @@ public class WorkPlace extends AppCompatActivity {
                 @Override
                 public void onSuccess() {
                     Log.d("debug","Success");
-                    new ExcelManager().ReadXLSX(f);
+
+                    manager = new ExcelManager(f, new FileLoadingListener() {
+                        @Override
+                        public void onBegin() {
+
+                        }
+
+                        @Override
+                        public void onSuccess() {
+                            Bundle bundle = new Bundle();
+
+                            bundle.putSerializable("manager", (Serializable) manager);
+
+                            nav.navigate(R.id.schedule,bundle);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable cause) {
+
+                        }
+
+                        @Override
+                        public void onEnd() {
+
+                        }
+                    });
+
+                    manager.startLoad();
                 }
 
                 @Override
@@ -146,7 +181,6 @@ public class WorkPlace extends AppCompatActivity {
             }
         ).execute();
 
-        
     }
 
     @SuppressLint("ResourceType")
@@ -168,10 +202,11 @@ public class WorkPlace extends AppCompatActivity {
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
+                activity,
+                PERMISSIONS_STORAGE,
+                REQUEST_EXTERNAL_STORAGE
             );
         }
     }
+
 }

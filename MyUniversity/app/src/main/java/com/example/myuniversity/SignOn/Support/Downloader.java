@@ -99,6 +99,8 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
 
     public void downloadGroup(int blockIndex, int institutePos){
         instituteGroup.clear();
+        urlList.clear();
+
         if(contents == null)
             return;
         Element block = contents.get(blockIndex);
@@ -136,6 +138,8 @@ public class Downloader extends AsyncTask<String, Void, ArrayList<String>> {
     }
 
     public ArrayList<String> getUrlList() { return urlList; }
+
+    public String getUrlPos(int i){return urlList.get(i); }
 
     public void setFinish(OnFinish finish){
         this.finish = finish;
