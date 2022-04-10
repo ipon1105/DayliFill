@@ -65,7 +65,9 @@ public class WorkPlace extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        fullscreen();
         if ((new Info(this)).isFirstStart()){
+            setContentView(R.layout.welcom);
 
 
             return;
@@ -74,7 +76,6 @@ public class WorkPlace extends AppCompatActivity {
         binding = ActivityWorkPlaceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        fullscreen();
         init();
     }
 

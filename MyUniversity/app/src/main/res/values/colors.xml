@@ -11,6 +11,8 @@
     <!-- general -->
     <color name="main_back">#070050</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="super_white">#80DCDCDC</color>
+    <color name="white_gray">#CFCFCF</color>
     <color name="black">#ff000000</color>
 
     <!-- Fragment SignOnPage-->
