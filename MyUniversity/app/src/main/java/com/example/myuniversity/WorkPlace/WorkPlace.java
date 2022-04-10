@@ -9,7 +9,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,7 +22,9 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.example.myuniversity.R;
+import com.example.myuniversity.WorkPlace.Support.Downloader;
 import com.example.myuniversity.WorkPlace.Support.Excel.ExcelManager;
+import com.example.myuniversity.WorkPlace.Support.Info;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingTask;
 import com.example.myuniversity.databinding.ActivityWorkPlaceBinding;
@@ -51,6 +56,7 @@ public class WorkPlace extends AppCompatActivity {
 
     private NavController nav;
     private ActivityWorkPlaceBinding binding;
+    private Info info;
 
     @SuppressLint("ResourceType")
     @Override
@@ -65,6 +71,7 @@ public class WorkPlace extends AppCompatActivity {
 
     //Инициализация
     private void init(){
+        info = new Info(this);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.box);
 
         if (navHostFragment != null)
@@ -112,6 +119,29 @@ public class WorkPlace extends AppCompatActivity {
         });
         WorkPlace.verifyStoragePermissions(this);
 
+        Log.d("debug", "Before load");
+        if (info.getFilePath() == null)
+            new Downloader(new FileLoadingListener() {
+                @Override
+                public void onBegin() {
+                    Log.d("debug", "Begin Download");
+                }
+
+                @Override
+                public void onSuccess() {
+                    Log.d("debug", "Success Download: ");
+                }
+
+                @Override
+                public void onFailure(Throwable cause) {
+                    Log.d("debug", "Faild Download: ", cause);
+                }
+
+                @Override
+                public void onEnd() {
+                    Log.d("debug", "End Download");
+                }
+            }).execute();
         //Log.d("debug", "https://www.sevsu.ru" + url);
         //File f = new File(Environment.getExternalStorageDirectory() + "/Download/MyUniversity/" + new File(url).getName());
 
@@ -172,6 +202,7 @@ public class WorkPlace extends AppCompatActivity {
         */
     }
 
+    //Проверить доступ к файловому мессенджеру
     public static void verifyStoragePermissions(Activity activity) {
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -196,5 +227,24 @@ public class WorkPlace extends AppCompatActivity {
                             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
             );
         }
+    }
+
+    //Проверка соендинения
+    public static boolean hasConnection(final Context context)
+    {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifiInfo != null && wifiInfo.isConnected())
+            return true;
+
+        wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if (wifiInfo != null && wifiInfo.isConnected())
+            return true;
+
+        wifiInfo = cm.getActiveNetworkInfo();
+        if (wifiInfo != null && wifiInfo.isConnected())
+            return true;
+
+        return false;
     }
 }

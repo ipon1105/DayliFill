@@ -50,14 +50,14 @@ public class Schedule extends Fragment {
     }
 
     private void init(){
-        try {
-            manager = (ExcelManager) getArguments().getSerializable("manager");
-
-            binding.fragmentList.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
-            binding.fragmentList.setAdapter(new FragmentListAdapter(manager.getDays(), binding.getRoot().getContext()));
-        }catch (Exception e){
-            Log.d("Schedule", "Error: ", e);
-        }
+        //try {
+        //    manager = (ExcelManager) getArguments().getSerializable("manager");
+//
+        //    binding.fragmentList.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
+        //    binding.fragmentList.setAdapter(new FragmentListAdapter(manager.getDays(), binding.getRoot().getContext()));
+        //}catch (Exception e){
+        //    Log.d("Schedule", "Error: ", e);
+        //}
 
         /*
         ArrayList<Element> monday = new ArrayList<>();
