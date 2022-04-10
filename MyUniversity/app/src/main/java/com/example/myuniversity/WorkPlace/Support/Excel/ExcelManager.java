@@ -51,7 +51,7 @@ public class ExcelManager implements Serializable {
         isFinish = false;
     }
 
-    public void startLoad(){
+    public void startLoad() throws FileNotFoundException{
         isFinish = false;
         fileLoadingListener.onBegin();
         Log.i("ExcelManager", "Start Constructor with File = " + file.getAbsolutePath() + ".");
@@ -93,6 +93,8 @@ public class ExcelManager implements Serializable {
         } catch (IOException e) {
             Log.e("ExcelManager", "IOException exception = ", e);
             fileLoadingListener.onFailure(e);
+            fileLoadingListener.onEnd();
+            throw new FileNotFoundException();
         }
         Log.i("ExcelManager", "Stop Constructor.");
         this.isFinish = true;

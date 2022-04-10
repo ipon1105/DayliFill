@@ -57,11 +57,20 @@ public class WorkPlace extends AppCompatActivity {
     private NavController nav;
     private ActivityWorkPlaceBinding binding;
     private Info info;
+    private Downloader downloader;
+    private ExcelManager manager;
 
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if ((new Info(this)).isFirstStart()){
+
+
+            return;
+        }
+
         binding = ActivityWorkPlaceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -119,9 +128,32 @@ public class WorkPlace extends AppCompatActivity {
         });
         WorkPlace.verifyStoragePermissions(this);
 
+        //До сюда всё нормально
+        manager = new ExcelManager(new File(info.getFilePath()), new FileLoadingListener() {
+            @Override
+            public void onBegin() {
+                Log.d("debug", "Begin ExcelManager");
+            }
+
+            @Override
+            public void onSuccess() {
+                Log.d("debug", "Success ExcelManager");
+            }
+
+            @Override
+            public void onFailure(Throwable cause) {
+                Log.d("debug", "Faild ExcelManager: ", cause);
+            }
+
+            @Override
+            public void onEnd() {
+                Log.d("debug", "End ExcelManager");
+            }
+        });
+
         Log.d("debug", "Before load");
         if (info.getFilePath() == null)
-            new Downloader(new FileLoadingListener() {
+            downloader = (Downloader) new Downloader(new FileLoadingListener() {
                 @Override
                 public void onBegin() {
                     Log.d("debug", "Begin Download");
@@ -130,10 +162,49 @@ public class WorkPlace extends AppCompatActivity {
                 @Override
                 public void onSuccess() {
                     Log.d("debug", "Success Download: ");
+
+                    info.setContentList(downloader.getContentList());
+                    info.setUrlList(downloader.getUrlList());
+                    info.setFilePath(Environment.getExternalStorageDirectory() + "/Download/MyUniversity/" + new File(downloader.getUrlList().get(2)).getName());
+
+                    info.save();
+
+                    new FileLoadingTask(
+                            "https://www.sevsu.ru" + downloader.getUrlList().get(2),
+                            new File(info.getFilePath()),
+                            new FileLoadingListener() {
+                                @Override
+                                public void onBegin() {
+                                    Log.d("debug", "Begin FileLoadingTask");
+                                }
+
+                                @Override
+                                public void onSuccess() {
+                                    Log.d("debug", "Success FileLoadingTask");
+                                    try {
+                                        manager.startLoad();
+                                    } catch (FileNotFoundException e) {
+                                        Log.d("debug", "File Not Found");
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Throwable cause) {
+                                    //Ошибка в загрузки данных с эксель файла
+                                    Log.d("debug", "Faild FileLoadingTask: ", cause);
+                                }
+
+                                @Override
+                                public void onEnd() {
+                                    Log.d("debug", "End FileLoadingTask");
+                                }
+                            }
+                    ).execute();
                 }
 
                 @Override
                 public void onFailure(Throwable cause) {
+                    //Нет соединения с интернетом при первом заходи
                     Log.d("debug", "Faild Download: ", cause);
                 }
 
@@ -142,9 +213,43 @@ public class WorkPlace extends AppCompatActivity {
                     Log.d("debug", "End Download");
                 }
             }).execute();
-        //Log.d("debug", "https://www.sevsu.ru" + url);
-        //File f = new File(Environment.getExternalStorageDirectory() + "/Download/MyUniversity/" + new File(url).getName());
+        else {
+            try {
+                manager.startLoad();
+            } catch (FileNotFoundException e) {
+                new FileLoadingTask(
+                        "https://www.sevsu.ru" + downloader.getUrlList().get(2),
+                        new File(info.getFilePath()),
+                        new FileLoadingListener() {
+                            @Override
+                            public void onBegin() {
+                                Log.d("debug", "Begin FileLoadingTask");
+                            }
 
+                            @Override
+                            public void onSuccess() {
+                                Log.d("debug", "Success FileLoadingTask");
+                                try {
+                                    manager.startLoad();
+                                } catch (FileNotFoundException e) {
+                                    Log.d("debug", "File Not Found");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Throwable cause) {
+                                //Ошибка в загрузки данных с эксель файла
+                                Log.d("debug", "Faild FileLoadingTask: ", cause);
+                            }
+
+                            @Override
+                            public void onEnd() {
+                                Log.d("debug", "End FileLoadingTask");
+                            }
+                        }
+                ).execute();
+            }
+        }
         /*
         new FileLoadingTask(
             "https://www.sevsu.ru" + url,
