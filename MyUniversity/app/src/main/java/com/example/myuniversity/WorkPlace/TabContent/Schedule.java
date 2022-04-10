@@ -1,4 +1,4 @@
-package com.example.myuniversity.WorkPlace;
+package com.example.myuniversity.WorkPlace.TabContent;
 
 import android.Manifest;
 import android.app.Activity;

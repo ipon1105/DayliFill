@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/schedule"
-        android:name="com.example.myuniversity.WorkPlace.Schedule"
+        android:name="com.example.myuniversity.WorkPlace.TabContent.Schedule"
         android:label="fragment_schedule"
         tools:layout="@layout/fragment_schedule" >
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/homework"
-        android:name="com.example.myuniversity.WorkPlace.HomeWork"
+        android:name="com.example.myuniversity.WorkPlace.TabContent.HomeWork"
         android:label="fragment_home_work"
         tools:layout="@layout/fragment_home_work" >
         <action
@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/setting"
-        android:name="com.example.myuniversity.WorkPlace.Setting"
+        android:name="com.example.myuniversity.WorkPlace.TabContent.Setting"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting" >
         <action
