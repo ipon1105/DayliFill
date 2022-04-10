@@ -17,30 +17,28 @@ import java.util.Set;
 
 public class Info implements Serializable {
     private final String firstStartNAME = "firstStart";
-    private final String filePathNAME = "filePath";
+    private final String fileNameNAME = "filePath";
     private final String contentListNAME = "contentList";
     private final String urlListNAME = "urlList";
-    private final String fileListNAME = "fileList";
 
-    private String filePath;
     private ArrayList<String> fileList;
 
     private SharedPreferences preferences;
-
-    //Получить список файлов в папке
-    public ArrayList<String> getDirectoryList(){
-        ArrayList<String> dirList = new ArrayList<>();
-        File[] files = new File(Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity").listFiles();
-        if (files != null)
-            for (File f : files)
-                dirList.add(f.getName());
-        return dirList;
-    }
 
     public Info(Context context){
         preferences = context.getSharedPreferences("info", Context.MODE_PRIVATE);
 
         fileList = new ArrayList<>();
+    }
+
+    //Получить имя расписания
+    public String getFileName(){
+        return preferences.getString(fileNameNAME, null);
+    }
+
+    //Установить имя расписания
+    public void setFileName(String set){
+        preferences.edit().putString(fileNameNAME, set).apply();
     }
 
     //Первый запуск
@@ -87,6 +85,16 @@ public class Info implements Serializable {
             for(String s : urlList)
                 urlListSet.add(s);
         preferences.edit().putStringSet(urlListNAME, urlListSet).apply();
+    }
+
+    //Получить список файлов в папке
+    public ArrayList<String> getDirectoryList(){
+        ArrayList<String> dirList = new ArrayList<>();
+        File[] files = new File(Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity").listFiles();
+        if (files != null)
+            for (File f : files)
+                dirList.add(f.getName());
+        return dirList;
     }
 
     @Override

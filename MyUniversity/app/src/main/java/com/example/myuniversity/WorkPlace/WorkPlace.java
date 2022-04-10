@@ -232,12 +232,11 @@ public class WorkPlace extends AppCompatActivity {
         WorkPlace.verifyStoragePermissions(this);
 
         Log.d("debug", "str = " + info.getDirectoryList());
-        //if (info.getFilePath() == null) {
+        if (info.getFileName() == null) {
             //Первый запуск
-
-        //} else {
+        } else {
             //Второй запуск
-        //}
+        }
         //До сюда всё нормально
         /*
         Log.d("debug", "Before load");
