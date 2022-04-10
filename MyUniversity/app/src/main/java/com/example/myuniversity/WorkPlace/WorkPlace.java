@@ -51,34 +51,22 @@ public class WorkPlace extends AppCompatActivity {
 
     private NavController nav;
     private ActivityWorkPlaceBinding binding;
-    private String url;
 
-    private static ExcelManager manager;
-    public static ExcelManager getManager(){
-        return manager;
+    @SuppressLint("ResourceType")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityWorkPlaceBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        fullscreen();
+        init();
     }
-
-
-    //Настройка окна
-    private void fullscreen(){
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-        );
-        if(Build.VERSION.SDK_INT >= 19){
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-            );
-        }
-    }
-
-    //Чтение данных их файла
-
 
     //Инициализация
     private void init(){
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.box);
+
         if (navHostFragment != null)
             nav = navHostFragment.getNavController();
 
@@ -124,9 +112,10 @@ public class WorkPlace extends AppCompatActivity {
         });
         WorkPlace.verifyStoragePermissions(this);
 
-        Log.d("debug", "https://www.sevsu.ru" + url);
-        File f = new File(Environment.getExternalStorageDirectory() + "/Download/MyUniversity/" + new File(url).getName());
+        //Log.d("debug", "https://www.sevsu.ru" + url);
+        //File f = new File(Environment.getExternalStorageDirectory() + "/Download/MyUniversity/" + new File(url).getName());
 
+        /*
         new FileLoadingTask(
             "https://www.sevsu.ru" + url,
                 f,
@@ -180,21 +169,7 @@ public class WorkPlace extends AppCompatActivity {
                 }
             }
         ).execute();
-
-    }
-
-    @SuppressLint("ResourceType")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityWorkPlaceBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        Bundle arguments = getIntent().getExtras();
-        url = (String) arguments.get("url");
-
-        fullscreen();
-        init();
+        */
     }
 
     public static void verifyStoragePermissions(Activity activity) {
@@ -209,4 +184,17 @@ public class WorkPlace extends AppCompatActivity {
         }
     }
 
+    //Настройка окна
+    private void fullscreen(){
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
+        if(Build.VERSION.SDK_INT >= 19){
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            );
+        }
+    }
 }

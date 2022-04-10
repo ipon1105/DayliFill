@@ -11,15 +11,13 @@
         android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_main"
-        android:label="@string/app_name_ru"        android:roundIcon="@mipmap/ic_main_round"
+        android:label="@string/app_name_ru"
+        android:roundIcon="@mipmap/ic_main_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyUniversity" >
 
         <activity
             android:name=".WorkPlace.WorkPlace"
-            android:exported="true" />
-        <activity
-            android:name=".MainActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
