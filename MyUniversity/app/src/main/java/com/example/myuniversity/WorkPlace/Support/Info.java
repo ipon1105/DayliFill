@@ -21,14 +21,10 @@ public class Info implements Serializable {
     private final String contentListNAME = "contentList";
     private final String urlListNAME = "urlList";
 
-    private ArrayList<String> fileList;
-
     private SharedPreferences preferences;
 
     public Info(Context context){
         preferences = context.getSharedPreferences("info", Context.MODE_PRIVATE);
-
-        fileList = new ArrayList<>();
     }
 
     //Получить имя расписания
@@ -99,7 +95,8 @@ public class Info implements Serializable {
 
     @Override
     public String toString() {
-        return "Info{" +
+        return "Info{" + "\n" +
+                "fileName = " + getFileName() + "\n" +
                 "contentList = " + getContentList() + "\n" +
                 "urlList = " + getUrlList() + "\n" +
                 '}';
