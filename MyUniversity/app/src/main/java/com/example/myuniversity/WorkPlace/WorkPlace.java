@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.example.myuniversity.R;
 import com.example.myuniversity.WorkPlace.Support.Downloader;
@@ -28,6 +29,7 @@ import com.example.myuniversity.WorkPlace.Support.Info;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingTask;
 import com.example.myuniversity.databinding.ActivityWorkPlaceBinding;
+import com.example.myuniversity.databinding.WelcomBinding;
 import com.google.android.material.tabs.TabLayout;
 
 import org.apache.commons.io.FileUtils;
@@ -55,10 +57,14 @@ public class WorkPlace extends AppCompatActivity {
     };
 
     private NavController nav;
-    private ActivityWorkPlaceBinding binding;
     private Info info;
     private Downloader downloader;
     private ExcelManager manager;
+
+    private ActivityWorkPlaceBinding binding;
+    private WelcomBinding welcomBinding;
+
+    private Context context;
 
     @SuppressLint("ResourceType")
     @Override
@@ -66,17 +72,110 @@ public class WorkPlace extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         fullscreen();
-        if ((new Info(this)).isFirstStart()){
-            setContentView(R.layout.welcom);
+        general_init();
 
+        if (info.isFirstStart()){
+            setContentView(welcomBinding.getRoot());
+
+            welcomBinding.btnNext.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (info.isFirstStart()) {
+                        setManager();
+
+                        if (!WorkPlace.hasConnection(context))
+                            Toast.makeText(context, "Нет подключения к интернету", Toast.LENGTH_SHORT).show();
+
+                        downloader.execute();
+                    } else {
+                        setContentView(binding.getRoot());
+                        init();
+                    }
+                }
+            });
+
+            downloader.execute();
 
             return;
         }
 
-        binding = ActivityWorkPlaceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         init();
+    }
+
+    //Общая инициализация
+    private void general_init(){
+        context = this;
+        welcomBinding = WelcomBinding.inflate(getLayoutInflater());
+        binding = ActivityWorkPlaceBinding.inflate(getLayoutInflater());
+
+        info = new Info(this);
+        setManager();
+    }
+
+    public void setManager(){
+        downloader = (Downloader) new Downloader(new FileLoadingListener() {
+            @Override
+            public void onBegin() {
+                Log.d("debug", "Begin FileLoadingListener");
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        welcomBinding.btnNext.setEnabled(false);
+                        welcomBinding.btnNext.setVisibility(View.INVISIBLE);
+
+                        welcomBinding.progressBar.setEnabled(true);
+                        welcomBinding.progressBar.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+
+            @Override
+            public void onSuccess() {
+                Log.d("debug", "Success FileLoadingListener");
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        welcomBinding.btnNext.setEnabled(true);
+                        welcomBinding.btnNext.setVisibility(View.VISIBLE);
+
+                        welcomBinding.progressBar.setEnabled(false);
+                        welcomBinding.progressBar.setVisibility(View.INVISIBLE);
+
+                        welcomBinding.btnNext.setText(getResources().getString(R.string.btnNextPage2));
+                    }
+                });
+
+                info.setFirstStartNAME(false);
+            }
+
+            @Override
+            public void onFailure(Throwable cause) {
+                Log.d("debug", "Begin FileLoadingListener");
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        welcomBinding.btnNext.setEnabled(true);
+                        welcomBinding.btnNext.setVisibility(View.VISIBLE);
+
+                        welcomBinding.progressBar.setEnabled(false);
+                        welcomBinding.progressBar.setVisibility(View.INVISIBLE);
+
+                        welcomBinding.btnNext.setText(getResources().getString(R.string.btnAgainPage2));
+                    }
+                });
+
+                info.setFirstStartNAME(true);
+            }
+
+            @Override
+            public void onEnd() {
+                Log.d("debug", "End FileLoadingListener");
+            }
+        });
     }
 
     //Инициализация
@@ -130,6 +229,7 @@ public class WorkPlace extends AppCompatActivity {
         WorkPlace.verifyStoragePermissions(this);
 
         //До сюда всё нормально
+        /*
         manager = new ExcelManager(new File(info.getFilePath()), new FileLoadingListener() {
             @Override
             public void onBegin() {
@@ -251,6 +351,9 @@ public class WorkPlace extends AppCompatActivity {
                 ).execute();
             }
         }
+        */
+
+
         /*
         new FileLoadingTask(
             "https://www.sevsu.ru" + url,

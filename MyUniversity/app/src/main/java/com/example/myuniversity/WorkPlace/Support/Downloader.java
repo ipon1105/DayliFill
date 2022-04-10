@@ -36,8 +36,7 @@ public class Downloader extends AsyncTask<String, Void, Void> {
         contents = null;
     }
 
-    @Override
-    protected Void doInBackground(String... strings) {
+    public void start(){
         fileLoadingListener.onBegin();
         Document doc;
 
@@ -52,6 +51,11 @@ public class Downloader extends AsyncTask<String, Void, Void> {
         }
 
         fileLoadingListener.onEnd();
+    }
+
+    @Override
+    protected Void doInBackground(String... strings) {
+        start();
         return null;
     }
 
