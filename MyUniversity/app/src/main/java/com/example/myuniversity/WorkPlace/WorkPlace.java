@@ -113,6 +113,7 @@ public class WorkPlace extends AppCompatActivity {
         setManager();
     }
 
+    //Участок инициализации
     public void setManager(){
         downloader = (Downloader) new Downloader(new FileLoadingListener() {
             @Override
@@ -149,6 +150,9 @@ public class WorkPlace extends AppCompatActivity {
                 });
 
                 info.setFirstStartNAME(false);
+                info.setUrlList(downloader.getUrlList());
+                info.setContentList(downloader.getContentList());
+
             }
 
             @Override
@@ -180,7 +184,6 @@ public class WorkPlace extends AppCompatActivity {
 
     //Инициализация
     private void init(){
-        info = new Info(this);
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.box);
 
         if (navHostFragment != null)
@@ -230,28 +233,6 @@ public class WorkPlace extends AppCompatActivity {
 
         //До сюда всё нормально
         /*
-        manager = new ExcelManager(new File(info.getFilePath()), new FileLoadingListener() {
-            @Override
-            public void onBegin() {
-                Log.d("debug", "Begin ExcelManager");
-            }
-
-            @Override
-            public void onSuccess() {
-                Log.d("debug", "Success ExcelManager");
-            }
-
-            @Override
-            public void onFailure(Throwable cause) {
-                Log.d("debug", "Faild ExcelManager: ", cause);
-            }
-
-            @Override
-            public void onEnd() {
-                Log.d("debug", "End ExcelManager");
-            }
-        });
-
         Log.d("debug", "Before load");
         if (info.getFilePath() == null)
             downloader = (Downloader) new Downloader(new FileLoadingListener() {

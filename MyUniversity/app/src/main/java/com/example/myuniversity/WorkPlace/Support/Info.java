@@ -22,7 +22,6 @@ public class Info implements Serializable {
 
     private String filePath;
     private ArrayList<String> contentList;
-    private ArrayList<String> urlList;
     private ArrayList<String> fileList;
 
     private SharedPreferences preferences;
@@ -32,7 +31,6 @@ public class Info implements Serializable {
 
         contentList = new ArrayList<>();
         fileList = new ArrayList<>();
-        urlList = new ArrayList<>();
     }
 
     //Первый запуск
@@ -53,10 +51,6 @@ public class Info implements Serializable {
             for (String s : contentListSet)
                 contentList.add(s);
 
-        Set<String> urlListSet = preferences.getStringSet(urlListNAME, null);
-        if (urlListSet != null)
-            for (String s : urlListSet)
-                urlList.add(s);
 
         Set<String> fileListSet = preferences.getStringSet(fileListNAME, null);
         if (fileListSet != null)
@@ -72,10 +66,6 @@ public class Info implements Serializable {
             for(String s : contentList)
                 contentListSet.add(s);
 
-        Set<String> urlListSet = new HashSet<>();
-        if (urlList != null)
-            for(String s : urlList)
-                urlListSet.add(s);
 
         Set<String> fileListSet = new HashSet<>();
         if (fileList != null)
@@ -85,8 +75,6 @@ public class Info implements Serializable {
         ed.putString(filePathNAME, filePath);
         ed.putStringSet(contentListNAME, contentListSet);
         ed.putStringSet(fileListNAME, fileListSet);
-        ed.putStringSet(urlListNAME, urlListSet);
-
         ed.apply();
     }
 
@@ -107,11 +95,21 @@ public class Info implements Serializable {
     }
 
     public ArrayList<String> getUrlList() {
+        ArrayList<String> urlList = new ArrayList<>();
+
+        Set<String> urlListSet = preferences.getStringSet(urlListNAME, null);
+        if (urlListSet != null)
+            for (String s : urlListSet)
+                urlList.add(s);
         return urlList;
     }
 
     public void setUrlList(ArrayList<String> urlList) {
-        this.urlList = urlList;
+        Set<String> urlListSet = new HashSet<>();
+        if (urlList != null)
+            for(String s : urlList)
+                urlListSet.add(s);
+        preferences.edit().putStringSet(urlListNAME, urlListSet).apply();
     }
 
 }
