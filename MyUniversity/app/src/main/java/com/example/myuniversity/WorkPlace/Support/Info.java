@@ -2,10 +2,12 @@ package com.example.myuniversity.WorkPlace.Support;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,15 +23,22 @@ public class Info implements Serializable {
     private final String fileListNAME = "fileList";
 
     private String filePath;
-    private ArrayList<String> contentList;
     private ArrayList<String> fileList;
 
     private SharedPreferences preferences;
 
+    //Получить список файлов в папке
+    public ArrayList<String> getDirectoryList(){
+        ArrayList<String> dirList = new ArrayList<>();
+        File[] files = new File(Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity").listFiles();
+        for (File f : files)
+            dirList.add(f.getName());
+        return dirList;
+    }
+
     public Info(Context context){
         preferences = context.getSharedPreferences("info", Context.MODE_PRIVATE);
 
-        contentList = new ArrayList<>();
         fileList = new ArrayList<>();
     }
 
@@ -43,55 +52,22 @@ public class Info implements Serializable {
         preferences.edit().putBoolean(firstStartNAME, set).apply();
     }
 
-    public void load(){
-        filePath = preferences.getString(filePathNAME, null);
+    public ArrayList<String> getContentList() {
+        ArrayList<String> contentList = new ArrayList<>();
 
         Set<String> contentListSet = preferences.getStringSet(contentListNAME, null);
         if (contentListSet != null)
             for (String s : contentListSet)
                 contentList.add(s);
-
-
-        Set<String> fileListSet = preferences.getStringSet(fileListNAME, null);
-        if (fileListSet != null)
-            for (String s : fileListSet)
-                fileList.add(s);
-    }
-
-    public void save(){
-        SharedPreferences.Editor ed = preferences.edit();
-
-        Set<String> contentListSet = new HashSet<>();
-        if (contentList != null)
-            for(String s : contentList)
-                contentListSet.add(s);
-
-
-        Set<String> fileListSet = new HashSet<>();
-        if (fileList != null)
-            for(String s : fileList)
-                fileListSet.add(s);
-
-        ed.putString(filePathNAME, filePath);
-        ed.putStringSet(contentListNAME, contentListSet);
-        ed.putStringSet(fileListNAME, fileListSet);
-        ed.apply();
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public ArrayList<String> getContentList() {
         return contentList;
     }
 
     public void setContentList(ArrayList<String> contentList) {
-        this.contentList = contentList;
+        Set<String> contentListSet = new HashSet<>();
+        if (contentList != null)
+            for(String s : contentList)
+                contentListSet.add(s);
+        preferences.edit().putStringSet(contentListNAME, contentListSet).apply();
     }
 
     public ArrayList<String> getUrlList() {
@@ -112,4 +88,11 @@ public class Info implements Serializable {
         preferences.edit().putStringSet(urlListNAME, urlListSet).apply();
     }
 
+    @Override
+    public String toString() {
+        return "Info{" +
+                "contentList = " + getContentList() + "\n" +
+                "urlList = " + getUrlList() + "\n" +
+                '}';
+    }
 }

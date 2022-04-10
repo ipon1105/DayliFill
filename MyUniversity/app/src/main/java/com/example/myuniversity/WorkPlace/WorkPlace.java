@@ -231,6 +231,13 @@ public class WorkPlace extends AppCompatActivity {
         });
         WorkPlace.verifyStoragePermissions(this);
 
+        Log.d("debug", "str = " + info.getDirectoryList());
+        //if (info.getFilePath() == null) {
+            //Первый запуск
+
+        //} else {
+            //Второй запуск
+        //}
         //До сюда всё нормально
         /*
         Log.d("debug", "Before load");
