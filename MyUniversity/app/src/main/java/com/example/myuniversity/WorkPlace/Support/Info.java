@@ -31,8 +31,9 @@ public class Info implements Serializable {
     public ArrayList<String> getDirectoryList(){
         ArrayList<String> dirList = new ArrayList<>();
         File[] files = new File(Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity").listFiles();
-        for (File f : files)
-            dirList.add(f.getName());
+        if (files != null)
+            for (File f : files)
+                dirList.add(f.getName());
         return dirList;
     }
 
