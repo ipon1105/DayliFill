@@ -57,7 +57,6 @@ public class WorkPlace extends AppCompatActivity {
     };
 
     private NavController nav;
-    private Info info;
     private Downloader downloader;
     private ExcelManager manager;
 
@@ -66,6 +65,7 @@ public class WorkPlace extends AppCompatActivity {
 
     private Context context;
 
+    public static Info info;
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,11 +232,8 @@ public class WorkPlace extends AppCompatActivity {
         WorkPlace.verifyStoragePermissions(this);
 
         Log.d("debug", "str = " + info.getDirectoryList());
-        if (info.getFileName() == null) {
-            //Первый запуск
-        } else {
-            //Второй запуск
-        }
+
+
         //До сюда всё нормально
         /*
         Log.d("debug", "Before load");

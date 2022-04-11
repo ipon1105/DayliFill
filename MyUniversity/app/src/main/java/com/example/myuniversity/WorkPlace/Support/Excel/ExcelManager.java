@@ -6,6 +6,7 @@ import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
 import com.example.myuniversity.WorkPlace.Support.RecView.Day;
 import com.example.myuniversity.WorkPlace.Support.RecView.Element;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -38,25 +39,21 @@ import java.util.Locale;
 */
 
 public class ExcelManager implements Serializable {
-    private ArrayList<SheetBlock> sheetList;
-    private File file;
-    private Boolean isXLS;
-    private Boolean isFinish;
     private FileLoadingListener fileLoadingListener;
+    private ArrayList<SheetBlock> sheetList;
+    private Boolean isXLS;
+    private File file;
 
+    //Конструктор
     public ExcelManager(File file, FileLoadingListener fileLoadingListener) {
         this.fileLoadingListener = fileLoadingListener;
-        this.isFinish = false;
+        this.sheetList = new ArrayList<>();
         this.file = file;
-        isFinish = false;
     }
 
-    public void startLoad() throws FileNotFoundException{
-        isFinish = false;
-        fileLoadingListener.onBegin();
-        Log.i("ExcelManager", "Start Constructor with File = " + file.getAbsolutePath() + ".");
-
-        sheetList = new ArrayList<>();
+    // Начать парсить данные с файла
+    public void startParser() {
+        this.fileLoadingListener.onBegin();
 
         String fileName = file.getName();
         if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
@@ -70,86 +67,62 @@ public class ExcelManager implements Serializable {
                 Workbook book = WorkbookFactory.create(file);
                 for(int i = 0; i < book.getNumberOfSheets(); i++)
                     fillSheetList(book.getSheetAt(i));
-
-                for(int i = 0; i < sheetList.size(); i++){
-                    Log.i("ExcelManager", sheetList.get(i).toString(i));
-                }
-
             } else {
                 Log.i("ExcelManager", "Work with xlsx file.");
 
                 XSSFWorkbook book = new XSSFWorkbook(file);
                 for(int i = 0; i < book.getNumberOfSheets(); i++)
                     fillSheetList(book.getSheetAt(i));
-
-                for(int i = 0; i < sheetList.size(); i++){
-                    Log.i("ExcelManager", sheetList.get(i).toString(i));
-                }
             }
 
+            for(int i = 0; i < sheetList.size(); i++)
+                Log.i("ExcelManager", sheetList.get(i).toString(i));
+
         } catch (InvalidFormatException e) {
-            Log.e("ExcelManager", "Error format = ", e);
-            fileLoadingListener.onFailure(e);
-        } catch (IOException e) {
-            Log.e("ExcelManager", "IOException exception = ", e);
             fileLoadingListener.onFailure(e);
             fileLoadingListener.onEnd();
-            throw new FileNotFoundException();
+            return;
+        } catch (EncryptedDocumentException e) {
+            fileLoadingListener.onFailure(e);
+            fileLoadingListener.onEnd();
+            return;
+        } catch (FileNotFoundException e){
+            fileLoadingListener.onFailure(e);
+            fileLoadingListener.onEnd();
+            return;
+        } catch (IOException e){
+            fileLoadingListener.onFailure(e);
+            fileLoadingListener.onEnd();
+            return;
+        } catch (Exception e){
+            fileLoadingListener.onFailure(e);
+            fileLoadingListener.onEnd();
+            return;
         }
-        Log.i("ExcelManager", "Stop Constructor.");
-        this.isFinish = true;
 
-        isFinish = true;
         fileLoadingListener.onSuccess();
         fileLoadingListener.onEnd();
     }
 
-    private void fillSheetList(Sheet sheet){
+    // Пробежка по всем вкладкам
+    private void fillSheetList(Sheet sheet) throws Exception{
         Log.i("ExcelManager", "Start fill sheet list = " + sheet.getSheetName() + ".");
 
-        ArrayList<Block> blockList = new ArrayList<>();
         ArrayList<Group> groupList = new ArrayList<>();
         ArrayList<Group> tempList = new ArrayList<>();
 
-        Row row = null;
-        Cell cell = null;
         int start = -1, stop, i, j;
-        String name;
+        Cell cell = null;
 
-        for(j = 0; j < 10; j++)
-            for(i = 0; i < 20; i++){
-                if ((row = sheet.getRow(i)) == null || (cell = row.getCell(j)) == null)
-                    continue;
+        //Начало таблицы
+        if ((cell = getTableStart(sheet)) == null)
+            throw new Exception("Failed parser, can not find the left up cell in the tab.");
 
-                if (cell.getCellType() == cell.CELL_TYPE_STRING &&
-                   !cell.getStringCellValue().equals("") &&
-                   cell.getStringCellValue().toLowerCase().equals("понедельник"))
-                {
-                    Log.d("ExcelManager", "find Left Right angle in " + String.valueOf(i) + "; (index="+String.valueOf(i-1)+").");
-                    start = i - 1; j = 10;
-                    row = sheet.getRow(start);
-                    break;
-                }
-            }
+        //Получить список групп
+        if ( (groupList = getGroupList(cell)) == null)
+            throw new Exception("Failed parser, can not parse data in table.");
 
-        if (start == -1){
-            Log.d("ExcelManager", "Not find start. Maybe old file format;");
-            return;
-        }
-
-
-        for(i = 0; i < row.getPhysicalNumberOfCells(); i++){
-            cell = row.getCell(i);
-
-            if (cell != null && cell.getCellType() == cell.CELL_TYPE_STRING)
-                name = cell.getStringCellValue();
-            else continue;
-
-            if(name.equals("") || name.equals("Время") || name.toLowerCase(Locale.ROOT).equals("понедельник"))
-                continue;
-
-            groupList.add(new Group(cell.getStringCellValue(), i));
-        }
+        //============================================
 
         if(groupList.size() == 0) {
             Log.d("ExcelManager", "Error");
@@ -183,12 +156,65 @@ public class ExcelManager implements Serializable {
 
         for(i = 0; i < blockList.size(); i++)
             Log.d("debug", String.valueOf(i) + " " + blockList.get(i).toString());
+        //============================================
 
-        sheetList.add(new SheetBlock(sheet.getSheetName(), blockList));
-        Log.i("ExcelManager", "Stop fill sheet list.");
+        sheetList.add(new SheetBlock(sheet, groupList));
+        Log.i("ExcelManager", "Stop fill sheet list = " + sheet.getSheetName() + ".");
     }
 
-    public ArrayList<Day> getDays(){
+    //Определям верхний левый уровинь таблицы
+    public Cell getTableStart(Sheet sheet){
+        Row row = null;
+        Cell cell = null;
+
+        for(int j = 0; j < 10; j++)
+            for(int i = 0; i < 20; i++){
+                if ((row = sheet.getRow(i)) == null || (cell = row.getCell(j)) == null)
+                    continue;
+
+                if (cell.getCellType() == cell.CELL_TYPE_STRING &&
+                    !cell.getStringCellValue().equals("") &&
+                    cell.getStringCellValue().toLowerCase().equals("понедельник"))
+                {
+                    Log.i("ExcelManager", "Find Left Right cell in " + String.valueOf(i) + "; (row = " + cell.getRowIndex() + "; col = " + cell.getColumnIndex() + ").");
+                    return cell;
+                }
+            }
+        return null;
+    }
+
+    //Получить список групп в таблице
+    public ArrayList<Group> getGroupList(Cell cell){
+        ArrayList<Group> groupList = new ArrayList<>();
+
+        Row row = cell.getRow();
+        String name = null;
+
+        for(int i = cell.getColumnIndex(); i < row.getLastCellNum(); i++){
+            cell = row.getCell(i);
+
+            if (cell != null && cell.getCellType() == cell.CELL_TYPE_STRING)
+                name = cell.getStringCellValue();
+            else continue;
+
+            if(name.equals("") || name.equals("Время") || name.toLowerCase(Locale.ROOT).equals("понедельник"))
+                continue;
+
+            groupList.add(new Group(cell.getStringCellValue(), i));
+        }
+
+        return groupList;
+    }
+
+    public ArrayList<Day> getDays(int sheetIndex){
+/*
+        SheetBlock sheet = sheetList.get(sheetIndex);
+
+        //for(int i = 0; i < sheetList.size(); i++)
+        //    if(sheetList.get(i).getBlockList() != null)
+        //        for(int j = 0; j < sheetList.get(i).getBlockList().size(); j++)
+
+
         ArrayList<Day> days = new ArrayList<>();
         ArrayList<Element> elements = new ArrayList<>();
 
@@ -201,7 +227,7 @@ public class ExcelManager implements Serializable {
             days.add(new Day(sheetList.get(i).getSheetName(), (ArrayList<Element>) elements.clone()));
             elements.clear();
         }
-
-        return days;
+*/
+        return null;
     }
 }

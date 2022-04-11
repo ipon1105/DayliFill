@@ -1,29 +1,24 @@
 package com.example.myuniversity.WorkPlace.TabContent;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
+import com.example.myuniversity.R;
 import com.example.myuniversity.WorkPlace.Support.Excel.ExcelManager;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
-import com.example.myuniversity.WorkPlace.Support.RecView.Day;
-import com.example.myuniversity.WorkPlace.Support.RecView.Element;
-import com.example.myuniversity.WorkPlace.Support.RecView.FragmentListAdapter;
+import com.example.myuniversity.WorkPlace.WorkPlace;
 import com.example.myuniversity.databinding.FragmentScheduleBinding;
 
-import java.util.ArrayList;
+import java.io.FileNotFoundException;
 
 public class Schedule extends Fragment {
     private FragmentScheduleBinding binding;
@@ -49,7 +44,53 @@ public class Schedule extends Fragment {
         init();
     }
 
-    private void init(){
+    private void init() {
+        binding.groupId.setChecked(WorkPlace.info.getGroup() == 0 ? true : false);
+        if (WorkPlace.info.getGroup() == 0 ? true : false)
+            binding.groupId.setText(getResources().getText(R.string.group_2));
+        else
+            binding.groupId.setText(getResources().getText(R.string.group_1));
+
+        binding.groupId.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                WorkPlace.info.setGroup(b ? 0 : 1);
+                if (WorkPlace.info.getGroup() == 0 ? true : false)
+                    binding.groupId.setText(getResources().getText(R.string.group_2));
+                else
+                    binding.groupId.setText(getResources().getText(R.string.group_1));
+            }
+        });
+
+        if (WorkPlace.info.getFilePath() != null){
+            ExcelManager manager = new ExcelManager(
+                WorkPlace.info.getFilePath(),
+                new FileLoadingListener() {
+                    @Override
+                    public void onBegin() {
+                        Log.i("ExcelManager", "Begin Excel Manager parser.");
+                    }
+
+                    @Override
+                    public void onSuccess() {
+                        Log.i("ExcelManager", "Success Excel Manager parser.");
+                    }
+
+                    @Override
+                    public void onFailure(Throwable cause) {
+                        Log.e("ExcelManager", "Failed Excel Manager parser: " + cause);
+                    }
+
+                    @Override
+                    public void onEnd() {
+                        Log.i("ExcelManager", "End Excel Manager parser.");
+                    }
+                }
+            );
+
+            manager.startParser();
+        }
+
         //try {
         //    manager = (ExcelManager) getArguments().getSerializable("manager");
 //

@@ -16,15 +16,34 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class Info implements Serializable {
+    private final String fileFilePathNAME = "fileFilePath";
+    private final String contentListNAME = "contentList";
     private final String firstStartNAME = "firstStart";
     private final String fileNameNAME = "filePath";
-    private final String contentListNAME = "contentList";
     private final String urlListNAME = "urlList";
+    private final String groupName = "group";
 
     private SharedPreferences preferences;
 
     public Info(Context context){
         preferences = context.getSharedPreferences("info", Context.MODE_PRIVATE);
+    }
+
+    //Получить путь к файла
+    public File getFilePath(){
+        if (getFileName() == null)
+            return null;
+        return new File(Environment.getExternalStorageDirectory() + "/Download/MyUniversity/" + getFileName());
+    }
+
+    //Получить группу (0 - группа 1;
+    public Integer getGroup(){
+        return preferences.getInt(groupName, 0);
+    }
+
+    //Установить группу
+    public void setGroup(Integer set){
+        preferences.edit().putInt(groupName, set).apply();
     }
 
     //Получить имя расписания
@@ -47,6 +66,7 @@ public class Info implements Serializable {
         preferences.edit().putBoolean(firstStartNAME, set).apply();
     }
 
+    //Получает список содержащий курсы
     public ArrayList<String> getContentList() {
         ArrayList<String> contentList = new ArrayList<>();
 
@@ -57,6 +77,7 @@ public class Info implements Serializable {
         return contentList;
     }
 
+    //Сохраняет список содержащий курсы
     public void setContentList(ArrayList<String> contentList) {
         Set<String> contentListSet = new HashSet<>();
         if (contentList != null)
@@ -65,6 +86,7 @@ public class Info implements Serializable {
         preferences.edit().putStringSet(contentListNAME, contentListSet).apply();
     }
 
+    //Получает список содержащий ссылки
     public ArrayList<String> getUrlList() {
         ArrayList<String> urlList = new ArrayList<>();
 
@@ -75,6 +97,7 @@ public class Info implements Serializable {
         return urlList;
     }
 
+    //Сохраняет список содержащий ссылки
     public void setUrlList(ArrayList<String> urlList) {
         Set<String> urlListSet = new HashSet<>();
         if (urlList != null)

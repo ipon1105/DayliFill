@@ -1,48 +1,34 @@
 package com.example.myuniversity.WorkPlace.Support.Excel;
 
+import com.example.myuniversity.WorkPlace.Support.RecView.Day;
+
+import org.apache.poi.ss.usermodel.Sheet;
+
 import java.util.ArrayList;
 
 public class SheetBlock {
-    private ArrayList<Block> blockList;
-    private String sheetName;
+    private ArrayList<Group> groupList;
+    private Sheet sheet;
 
-    public SheetBlock(String sheetName) {
-        this.sheetName = sheetName;
+    public SheetBlock(Sheet sheet, ArrayList<Group> groupList) {
+        this.groupList = groupList;
+        this.sheet = sheet;
     }
 
-    public SheetBlock(String sheetName, ArrayList<Block> blockList) {
-        this.sheetName = sheetName;
-        this.blockList = blockList;
-    }
-
-    public ArrayList<Block> getBlockList() {
-        return blockList;
-    }
-
-    public void setBlockList(ArrayList<Block> blockList) {
-        this.blockList = blockList;
-    }
-
+    //Получить имя вкладки
     public String getSheetName() {
-        return sheetName;
-    }
-
-    public void setSheetName(String sheetName) {
-        this.sheetName = sheetName;
+        return sheet.getSheetName();
     }
 
     @Override
     public String toString() {
-        return "SheetBlock{" +
-                "blockList=" + blockList +
-                ", sheetName='" + sheetName + '\'' +
+        return "SheetBlock{" + "\n" +
+                "groupList=" + groupList +
+                ", sheet=" + sheet + "\n" +
                 '}';
     }
 
     public String toString(int i) {
-        return "Sheet № " + String.valueOf(i) + "{" +
-                "sheetName='" + sheetName + '\'' +
-                ", blockList=" + blockList +
-                '}';
+        return String.valueOf(i) + ": " + toString();
     }
 }

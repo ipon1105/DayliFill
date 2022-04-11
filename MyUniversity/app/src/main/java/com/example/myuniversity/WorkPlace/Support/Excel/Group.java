@@ -1,9 +1,6 @@
 package com.example.myuniversity.WorkPlace.Support.Excel;
 
 public class Group {
-    private final int ROW_INDEX_START = 9;
-    private final int ROW_INDEX_STOP = 57;
-
     private String name;
     private int cellStart;
 
@@ -31,8 +28,6 @@ public class Group {
     @Override
     public String toString() {
         return "Group{" +
-                "ROW_INDEX_START=" + ROW_INDEX_START +
-                ", ROW_INDEX_STOP=" + ROW_INDEX_STOP +
                 ", name='" + name + '\'' +
                 ", cellStart=" + cellStart +
                 '}';
