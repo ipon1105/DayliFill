@@ -141,8 +141,7 @@ public class Info implements Serializable {
 
         ArrayList<String> dirList = new ArrayList<>();
         ArrayList<File> files = new ArrayList<>();
-        File[] files1 = new File(Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity/" + str).listFiles();
-        for (File f : files1)
+        for (File f : new File(Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity/" + str).listFiles())
             files.add(f);
 
         files.sort(new Comparator<File>() {
@@ -155,7 +154,7 @@ public class Info implements Serializable {
         if (files != null)
             for (File f : files)
                 dirList.add(f.getName());
-            
+
         return dirList;
     }
 
