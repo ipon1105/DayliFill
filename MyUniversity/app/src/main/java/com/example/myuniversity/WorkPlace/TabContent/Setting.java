@@ -52,8 +52,8 @@ public class Setting extends Fragment {
         myRecyclerViewAdapter_1.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                WorkPlace.info.setContentIndex(position);
                 myRecyclerViewAdapter_1.notifyDataSetChanged();
-                ((TextView) view).setTypeface(null, Typeface.BOLD);
             }
         });
 
@@ -90,6 +90,9 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.V
         String animal = mData.get(position);
         holder.myTextView.setText(animal);
         holder.myTextView.setTypeface(null, Typeface.NORMAL);
+
+        if (WorkPlace.info.getContentIndex() == position)
+            holder.myTextView.setTypeface(null, Typeface.BOLD);
     }
 
     // total number of rows
@@ -129,4 +132,6 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.V
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }
+
+
 }
