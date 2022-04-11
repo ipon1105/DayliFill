@@ -28,6 +28,7 @@ import com.example.myuniversity.WorkPlace.WorkPlace;
 import com.example.myuniversity.databinding.FragmentSettingBinding;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class Setting extends Fragment {
@@ -86,7 +87,13 @@ public class Setting extends Fragment {
 
                                 @Override
                                 public void onFailure(Throwable cause) {
+                                    if (cause.getClass().equals(FileNotFoundException.class)){
+                                        Toast.makeText(context, "Файл не найден", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+
                                     Log.i("Setting", "Failed load: ", cause);
+                                    Toast.makeText(context, "Успешная загрузка", Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override

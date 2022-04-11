@@ -74,5 +74,6 @@
     <string name="group_2">2 группа</string>
     <string name="content">Курс</string>
     <string name="group">Группа</string>
+    <string name="Schedule">Расписания</string>
     <string name="non_content">Для начала, вам необходимо выбрать курс и группу в настройках</string>
 </resources>
