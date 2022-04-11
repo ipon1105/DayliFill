@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class Info implements Serializable {
+    private final String contentIndexNAME = "contentIndex";
+
     private final String fileFilePathNAME = "fileFilePath";
     private final String contentListNAME = "contentList";
     private final String firstStartNAME = "firstStart";
@@ -27,6 +29,16 @@ public class Info implements Serializable {
 
     public Info(Context context){
         preferences = context.getSharedPreferences("info", Context.MODE_PRIVATE);
+    }
+
+    //Индекс выбранной группы
+    public Integer getContentIndex(){
+        return preferences.getInt(contentIndexNAME, 0);
+    }
+
+    //Установить индекс выбранной группы
+    public void setContentIndex(Integer set){
+        preferences.edit().putInt(contentIndexNAME, set).apply();
     }
 
     //Получить путь к файла
