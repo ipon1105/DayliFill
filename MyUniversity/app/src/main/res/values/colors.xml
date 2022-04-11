@@ -9,7 +9,8 @@
     <color name="whiteOff">#D3D3D3</color>
 
     <!-- general -->
-    <color name="main_back">#070050</color>
+    <color name="main_back">#6455FF</color>
+    <color name="double_back">#FFFFFF</color>
     <color name="white">#FFFFFFFF</color>
     <color name="super_white">#80DCDCDC</color>
     <color name="white_gray">#CFCFCF</color>

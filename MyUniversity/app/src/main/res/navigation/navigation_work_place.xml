@@ -11,10 +11,13 @@
         android:label="fragment_schedule"
         tools:layout="@layout/fragment_schedule" >
         <action
-            android:id="@+id/action_schedule_to_homeWork"
+            android:id="@+id/schedule_0_1"
             app:destination="@id/homework" />
         <action
-            android:id="@+id/action_schedule_to_setting"
+            android:id="@+id/action_schedule_self"
+            app:destination="@id/schedule" />
+        <action
+            android:id="@+id/schedule_0_2"
             app:destination="@id/setting" />
     </fragment>
     <fragment
@@ -28,6 +31,9 @@
         <action
             android:id="@+id/action_homeWork_to_schedule"
             app:destination="@id/schedule" />
+        <action
+            android:id="@+id/action_homework_self"
+            app:destination="@id/homework" />
     </fragment>
     <fragment
         android:id="@+id/setting"
@@ -40,6 +46,9 @@
         <action
             android:id="@+id/action_setting_to_schedule"
             app:destination="@id/schedule" />
+        <action
+            android:id="@+id/action_setting_self"
+            app:destination="@id/setting" />
     </fragment>
     <activity
         android:id="@+id/workPlace"

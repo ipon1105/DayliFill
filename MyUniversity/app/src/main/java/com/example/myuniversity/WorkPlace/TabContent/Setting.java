@@ -53,6 +53,7 @@ public class Setting extends Fragment {
 
         binding.groupList.setLayoutManager(new LinearLayoutManager(this.getContext()));
         binding.groupList.setAdapter(myRecyclerViewAdapter_2);
+
     }
 }
 

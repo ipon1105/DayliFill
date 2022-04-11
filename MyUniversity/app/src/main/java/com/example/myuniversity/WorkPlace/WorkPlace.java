@@ -3,7 +3,6 @@ package com.example.myuniversity.WorkPlace;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.Manifest;
@@ -15,39 +14,18 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.myuniversity.R;
 import com.example.myuniversity.WorkPlace.Support.Downloader;
-import com.example.myuniversity.WorkPlace.Support.Excel.ExcelManager;
 import com.example.myuniversity.WorkPlace.Support.Info;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
-import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingTask;
 import com.example.myuniversity.databinding.ActivityWorkPlaceBinding;
 import com.example.myuniversity.databinding.WelcomBinding;
 import com.google.android.material.tabs.TabLayout;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.formula.functions.Column;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.Iterator;
 
 public class WorkPlace extends AppCompatActivity {
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -184,42 +162,42 @@ public class WorkPlace extends AppCompatActivity {
 
     //Инициализация
     private void init(){
-        Log.d("debug", "a: " + info.toString());
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.box);
 
         if (navHostFragment != null)
             nav = navHostFragment.getNavController();
 
         binding.tabList.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            TabLayout.Tab lastTab;
+            int lastPos = -1;
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (lastTab == null)
-                    lastTab = tab;
+
+                if (lastPos == -1)
+                    lastPos = 0;
 
                 try {
                     switch (tab.getPosition()){
                         case 0:
-                            if (lastTab.getPosition() == 1)
+                            if (lastPos == 1)
                                 nav.navigate(R.id.action_homeWork_to_schedule);
                             else
                                 nav.navigate(R.id.action_setting_to_schedule);
                             break;
                         case 1:
-                            if (lastTab.getPosition() == 2)
+                            if (lastPos == 2)
                                 nav.navigate(R.id.action_setting_to_homeWork);
                             else
-                                nav.navigate(R.id.action_schedule_to_homeWork);
+                                nav.navigate(R.id.schedule_0_1);
                             break;
                         case 2:
-                            if (lastTab.getPosition() == 0)
-                                nav.navigate(R.id.action_schedule_to_setting);
+                            if (lastPos == 0)
+                                nav.navigate(R.id.schedule_0_2);
                             else
                                 nav.navigate(R.id.action_homeWork_to_setting);
                             break;
 
                     }
-                    lastTab = tab;
+                    lastPos = tab.getPosition();
                 } catch (Exception e){
                     Log.e("WorkPlace", "Error: " + e);
                 }
