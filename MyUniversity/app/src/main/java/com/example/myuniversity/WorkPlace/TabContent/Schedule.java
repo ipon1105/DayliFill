@@ -91,6 +91,13 @@ public class Schedule extends Fragment {
             manager.startParser();
         }
 
+        if (WorkPlace.info.getContentIndex() == -1 || WorkPlace.info.getGroupIndex() == -1){
+            binding.txtNonContent.setVisibility(View.VISIBLE);
+            return;
+        }
+        binding.txtNonContent.setVisibility(View.INVISIBLE);
+
+        //
         //try {
         //    manager = (ExcelManager) getArguments().getSerializable("manager");
 //

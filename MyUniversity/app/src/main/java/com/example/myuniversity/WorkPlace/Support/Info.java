@@ -17,6 +17,7 @@ import java.util.Set;
 
 public class Info implements Serializable {
     private final String contentIndexNAME = "contentIndex";
+    private final String groupIndexNAME = "groupIndex";
 
     private final String fileFilePathNAME = "fileFilePath";
     private final String contentListNAME = "contentList";
@@ -39,6 +40,16 @@ public class Info implements Serializable {
     //Установить индекс выбранной группы
     public void setContentIndex(Integer set){
         preferences.edit().putInt(contentIndexNAME, set).apply();
+    }
+
+    //Индекс выбранной группы
+    public Integer getGroupIndex(){
+        return preferences.getInt(groupIndexNAME, -1);
+    }
+
+    //Установить индекс выбранной группы
+    public void setGroupIndex(Integer set){
+        preferences.edit().putInt(groupIndexNAME, set).apply();
     }
 
     //Получить путь к файла

@@ -47,7 +47,7 @@ public class Setting extends Fragment {
     //Инициализация
     private void init(){
         MyRecyclerViewAdapter myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter(this.getContext(), WorkPlace.info.getContentList());
-        MyRecyclerViewAdapter myRecyclerViewAdapter_2 = new MyRecyclerViewAdapter(this.getContext(), WorkPlace.info.getUrlList());
+        MyRecyclerViewAdapter myRecyclerViewAdapter_2 = new MyRecyclerViewAdapter(this.getContext(), WorkPlace.info.getDirectoryList());
 
         myRecyclerViewAdapter_1.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
             @Override
