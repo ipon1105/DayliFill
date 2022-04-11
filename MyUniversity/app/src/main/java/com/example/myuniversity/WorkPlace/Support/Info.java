@@ -33,7 +33,7 @@ public class Info implements Serializable {
 
     //Индекс выбранной группы
     public Integer getContentIndex(){
-        return preferences.getInt(contentIndexNAME, 0);
+        return preferences.getInt(contentIndexNAME, -1);
     }
 
     //Установить индекс выбранной группы

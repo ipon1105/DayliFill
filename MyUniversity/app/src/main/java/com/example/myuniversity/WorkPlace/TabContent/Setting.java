@@ -1,6 +1,7 @@
 package com.example.myuniversity.WorkPlace.TabContent;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -48,12 +49,19 @@ public class Setting extends Fragment {
         MyRecyclerViewAdapter myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter(this.getContext(), WorkPlace.info.getContentList());
         MyRecyclerViewAdapter myRecyclerViewAdapter_2 = new MyRecyclerViewAdapter(this.getContext(), WorkPlace.info.getUrlList());
 
+        myRecyclerViewAdapter_1.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                myRecyclerViewAdapter_1.notifyDataSetChanged();
+                ((TextView) view).setTypeface(null, Typeface.BOLD);
+            }
+        });
+
         binding.contentList.setLayoutManager(new LinearLayoutManager(this.getContext()));
         binding.contentList.setAdapter(myRecyclerViewAdapter_1);
 
         binding.groupList.setLayoutManager(new LinearLayoutManager(this.getContext()));
         binding.groupList.setAdapter(myRecyclerViewAdapter_2);
-
     }
 }
 
@@ -81,6 +89,7 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.V
     public void onBindViewHolder(ViewHolder holder, int position) {
         String animal = mData.get(position);
         holder.myTextView.setText(animal);
+        holder.myTextView.setTypeface(null, Typeface.NORMAL);
     }
 
     // total number of rows
