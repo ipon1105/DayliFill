@@ -109,9 +109,6 @@ public class ExcelManager implements Serializable {
         Log.i("ExcelManager", "Start fill sheet list = " + sheet.getSheetName() + ".");
 
         ArrayList<Group> groupList = new ArrayList<>();
-        ArrayList<Group> tempList = new ArrayList<>();
-
-        int start = -1, stop, i, j;
         Cell cell = null;
 
         //Начало таблицы
@@ -121,42 +118,6 @@ public class ExcelManager implements Serializable {
         //Получить список групп
         if ( (groupList = getGroupList(cell)) == null)
             throw new Exception("Failed parser, can not parse data in table.");
-
-        //============================================
-
-        if(groupList.size() == 0) {
-            Log.d("ExcelManager", "Error");
-            Log.i("ExcelManager", "Stop fill sheet list.");
-            sheetList.add(new SheetBlock(sheet.getSheetName()));
-            return;
-        }
-
-        start = 0; stop = 0;
-        for(i = 0; i < groupList.size() - 1; i++) {
-
-            if (groupList.get(i + 1).getCellStart() - groupList.get(i).getCellStart() > 4)
-                stop = i + 1;
-            else continue;
-
-            for(Group g : groupList.subList(start, stop))
-                tempList.add(g);
-
-            blockList.add(new Block((ArrayList<Group>) tempList.clone()));
-            tempList.clear();
-            start = stop;
-        }
-
-        if(start <= stop) {
-            for(Group g : groupList.subList(start, groupList.size()))
-                tempList.add(g);
-
-            blockList.add(new Block((ArrayList<Group>) tempList.clone()));
-            tempList.clear();
-        }
-
-        for(i = 0; i < blockList.size(); i++)
-            Log.d("debug", String.valueOf(i) + " " + blockList.get(i).toString());
-        //============================================
 
         sheetList.add(new SheetBlock(sheet, groupList));
         Log.i("ExcelManager", "Stop fill sheet list = " + sheet.getSheetName() + ".");
