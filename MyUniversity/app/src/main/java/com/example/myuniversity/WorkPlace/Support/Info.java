@@ -2,15 +2,18 @@ package com.example.myuniversity.WorkPlace.Support;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -130,12 +133,29 @@ public class Info implements Serializable {
     }
 
     //Получить список файлов в папке
-    public ArrayList<String> getDirectoryList(){
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public ArrayList<String> getDirectoryList(String str){
+        File tmp = new File(Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity/" + str + File.separator);
+        if (!tmp.exists())
+            tmp.mkdir();
+
         ArrayList<String> dirList = new ArrayList<>();
-        File[] files = new File(Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity").listFiles();
+        ArrayList<File> files = new ArrayList<>();
+        File[] files1 = new File(Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity/" + str).listFiles();
+        for (File f : files1)
+            files.add(f);
+
+        files.sort(new Comparator<File>() {
+            @Override
+            public int compare(File f1, File f2) {
+                return Long.compare(f1.lastModified(), f2.lastModified());
+            }
+        });
+
         if (files != null)
             for (File f : files)
                 dirList.add(f.getName());
+            
         return dirList;
     }
 

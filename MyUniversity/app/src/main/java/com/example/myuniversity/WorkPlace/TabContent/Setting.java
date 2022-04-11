@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.myuniversity.R;
 import com.example.myuniversity.WorkPlace.WorkPlace;
@@ -46,22 +48,31 @@ public class Setting extends Fragment {
 
     //Инициализация
     private void init(){
+        Context context = this.getContext();
         MyRecyclerViewAdapter myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter(this.getContext(), WorkPlace.info.getContentList());
-        MyRecyclerViewAdapter myRecyclerViewAdapter_2 = new MyRecyclerViewAdapter(this.getContext(), WorkPlace.info.getDirectoryList());
 
         myRecyclerViewAdapter_1.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 WorkPlace.info.setContentIndex(position);
                 myRecyclerViewAdapter_1.notifyDataSetChanged();
+
+                if (!WorkPlace.hasConnection(context))
+                    Toast.makeText(context, "Нет интернета для загрузки расписания", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Начинаю загрузку расписания с сайта", Toast.LENGTH_SHORT).show();
+
+                MyRecyclerViewAdapter myRecyclerViewAdapter_2 = new MyRecyclerViewAdapter(
+                        context,
+                        WorkPlace.info.getDirectoryList(myRecyclerViewAdapter_1.getItem(position))
+                );
+
+                binding.groupList.setLayoutManager(new LinearLayoutManager(context));
+                binding.groupList.setAdapter(myRecyclerViewAdapter_2);
             }
         });
 
         binding.contentList.setLayoutManager(new LinearLayoutManager(this.getContext()));
         binding.contentList.setAdapter(myRecyclerViewAdapter_1);
-
-        binding.groupList.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        binding.groupList.setAdapter(myRecyclerViewAdapter_2);
     }
 }
 

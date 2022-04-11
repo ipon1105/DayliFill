@@ -216,7 +216,6 @@ public class WorkPlace extends AppCompatActivity {
         });
         WorkPlace.verifyStoragePermissions(this);
 
-        Log.d("debug", "str = " + info.getDirectoryList());
         generalUpdate();
 
         //До сюда всё нормально
