@@ -2,16 +2,19 @@ package com.example.myuniversity.WorkPlace.TabContent;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myuniversity.R;
+import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
+import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingTask;
 import com.example.myuniversity.WorkPlace.WorkPlace;
 import com.example.myuniversity.databinding.FragmentSettingBinding;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class Setting extends Fragment {
@@ -52,14 +58,44 @@ public class Setting extends Fragment {
         MyRecyclerViewAdapter myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter(this.getContext(), WorkPlace.info.getContentList());
 
         myRecyclerViewAdapter_1.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onItemClick(View view, int position) {
                 WorkPlace.info.setContentIndex(position);
                 myRecyclerViewAdapter_1.notifyDataSetChanged();
 
-                if (!WorkPlace.hasConnection(context))
+                if (!WorkPlace.hasConnection(context)) {
                     Toast.makeText(context, "Нет интернета для загрузки расписания", Toast.LENGTH_SHORT).show();
+
+                } else {
                     Toast.makeText(context, "Начинаю загрузку расписания с сайта", Toast.LENGTH_SHORT).show();
+
+                    new FileLoadingTask(
+                            "https://www.sevsu.ru" + WorkPlace.info.getUrlList().get(position),
+                            new File(WorkPlace.info.getPath() + myRecyclerViewAdapter_1.getItem(position) + File.separator + new File(WorkPlace.info.getUrlList().get(position)).getName()),
+                            new FileLoadingListener() {
+                                @Override
+                                public void onBegin() {
+                                    Log.i("Setting", "Begin load");
+                                }
+
+                                @Override
+                                public void onSuccess() {
+                                    Log.i("Setting", "Success load");
+                                }
+
+                                @Override
+                                public void onFailure(Throwable cause) {
+                                    Log.i("Setting", "Failed load: ", cause);
+                                }
+
+                                @Override
+                                public void onEnd() {
+                                    Log.i("Setting", "End load");
+                                }
+                            }
+                    ).execute();
+                }
 
                 MyRecyclerViewAdapter myRecyclerViewAdapter_2 = new MyRecyclerViewAdapter(
                         context,

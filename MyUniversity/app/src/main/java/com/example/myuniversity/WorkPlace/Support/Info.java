@@ -19,14 +19,21 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class Info implements Serializable {
+    private final String contentMatchNAME[] = {
+        "c_1", "c_2", "c_3", "c_4", "c_5",
+        "c_6", "c_7", "c_8", "c_9", "c_10"
+    };
+    private final String urlMatchNAME[] = {
+        "u_1", "u_2", "u_3", "u_4", "u_5",
+        "u_6", "u_7", "u_8", "u_9", "u_10"
+    };
+
     private final String contentIndexNAME = "contentIndex";
     private final String groupIndexNAME = "groupIndex";
 
     private final String fileFilePathNAME = "fileFilePath";
-    private final String contentListNAME = "contentList";
     private final String firstStartNAME = "firstStart";
     private final String fileNameNAME = "filePath";
-    private final String urlListNAME = "urlList";
     private final String groupName = "group";
 
     private SharedPreferences preferences;
@@ -65,6 +72,7 @@ public class Info implements Serializable {
     //Получить группу (0 - группа 1;
     public Integer getGroup(){
         return preferences.getInt(groupName, 0);
+
     }
 
     //Установить группу
@@ -95,41 +103,39 @@ public class Info implements Serializable {
     //Получает список содержащий курсы
     public ArrayList<String> getContentList() {
         ArrayList<String> contentList = new ArrayList<>();
+        String tmp = null;
 
-        Set<String> contentListSet = preferences.getStringSet(contentListNAME, null);
-        if (contentListSet != null)
-            for (String s : contentListSet)
-                contentList.add(s);
+        for(int i = 0; i < 10; i++) {
+            if ((tmp = preferences.getString(contentMatchNAME[i], null)) == null)
+                continue;
+            contentList.add(tmp);
+        }
         return contentList;
     }
 
     //Сохраняет список содержащий курсы
     public void setContentList(ArrayList<String> contentList) {
-        Set<String> contentListSet = new HashSet<>();
-        if (contentList != null)
-            for(String s : contentList)
-                contentListSet.add(s);
-        preferences.edit().putStringSet(contentListNAME, contentListSet).apply();
+        for (int i = 0; i < contentList.size(); i++)
+            preferences.edit().putString(contentMatchNAME[i], contentList.get(i)).apply();
     }
 
     //Получает список содержащий ссылки
     public ArrayList<String> getUrlList() {
         ArrayList<String> urlList = new ArrayList<>();
+        String tmp = null;
 
-        Set<String> urlListSet = preferences.getStringSet(urlListNAME, null);
-        if (urlListSet != null)
-            for (String s : urlListSet)
-                urlList.add(s);
+        for(int i = 0; i < 10; i++) {
+            if ((tmp = preferences.getString(urlMatchNAME[i], null)) == null)
+                continue;
+            urlList.add(tmp);
+        }
         return urlList;
     }
 
     //Сохраняет список содержащий ссылки
     public void setUrlList(ArrayList<String> urlList) {
-        Set<String> urlListSet = new HashSet<>();
-        if (urlList != null)
-            for(String s : urlList)
-                urlListSet.add(s);
-        preferences.edit().putStringSet(urlListNAME, urlListSet).apply();
+        for (int i = 0; i < urlList.size(); i++)
+            preferences.edit().putString(urlMatchNAME[i], urlList.get(i)).apply();
     }
 
     //Получить список файлов в папке
@@ -156,6 +162,10 @@ public class Info implements Serializable {
                 dirList.add(f.getName());
 
         return dirList;
+    }
+
+    public String getPath(){
+        return Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity/";
     }
 
     @Override
