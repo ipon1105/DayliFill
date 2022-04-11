@@ -184,12 +184,13 @@ public class WorkPlace extends AppCompatActivity {
 
     //Инициализация
     private void init(){
+        Log.d("debug", "a: " + info.toString());
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.box);
 
         if (navHostFragment != null)
             nav = navHostFragment.getNavController();
 
-        binding.tabList.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        binding.tabList.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             TabLayout.Tab lastTab;
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
