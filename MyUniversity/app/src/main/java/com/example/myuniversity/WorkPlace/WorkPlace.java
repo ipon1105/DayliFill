@@ -58,7 +58,6 @@ public class WorkPlace extends AppCompatActivity {
 
     private NavController nav;
     private Downloader downloader;
-    private ExcelManager manager;
 
     private ActivityWorkPlaceBinding binding;
     private WelcomBinding welcomBinding;
@@ -66,6 +65,7 @@ public class WorkPlace extends AppCompatActivity {
     private Context context;
 
     public static Info info;
+
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,27 +196,33 @@ public class WorkPlace extends AppCompatActivity {
                 if (lastTab == null)
                     lastTab = tab;
 
-                switch (tab.getPosition()){
-                    case 0:
-                        if (lastTab.getPosition() == 1)
-                            nav.navigate(R.id.action_homeWork_to_schedule);
-                        else
-                            nav.navigate(R.id.action_setting_to_schedule);
-                    break;
-                    case 1:
-                        if (lastTab.getPosition() == 2)
-                            nav.navigate(R.id.action_setting_to_homeWork);
-                        else
-                            nav.navigate(R.id.action_schedule_to_homeWork);
-                    break;
-                    case 2:
-                        if (lastTab.getPosition() == 0)
-                            nav.navigate(R.id.action_schedule_to_setting);
-                        else
-                            nav.navigate(R.id.action_homeWork_to_setting);
-                    break;
+                try {
+                    switch (tab.getPosition()){
+                        case 0:
+                            if (lastTab.getPosition() == 1)
+                                nav.navigate(R.id.action_homeWork_to_schedule);
+                            else
+                                nav.navigate(R.id.action_setting_to_schedule);
+                            break;
+                        case 1:
+                            if (lastTab.getPosition() == 2)
+                                nav.navigate(R.id.action_setting_to_homeWork);
+                            else
+                                nav.navigate(R.id.action_schedule_to_homeWork);
+                            break;
+                        case 2:
+                            if (lastTab.getPosition() == 0)
+                                nav.navigate(R.id.action_schedule_to_setting);
+                            else
+                                nav.navigate(R.id.action_homeWork_to_setting);
+                            break;
+
+                    }
+                    lastTab = tab;
+                } catch (Exception e){
+                    Log.e("WorkPlace", "Error: " + e);
                 }
-                lastTab = tab;
+
             }
 
             @Override
@@ -232,7 +238,7 @@ public class WorkPlace extends AppCompatActivity {
         WorkPlace.verifyStoragePermissions(this);
 
         Log.d("debug", "str = " + info.getDirectoryList());
-
+        generalUpdate();
 
         //До сюда всё нормально
         /*
@@ -336,8 +342,6 @@ public class WorkPlace extends AppCompatActivity {
             }
         }
         */
-
-
         /*
         new FileLoadingTask(
             "https://www.sevsu.ru" + url,
@@ -393,6 +397,16 @@ public class WorkPlace extends AppCompatActivity {
             }
         ).execute();
         */
+    }
+
+    //Попытаться обновить данные
+    public void generalUpdate(){
+        if (!hasConnection(this)) {
+            Toast.makeText(this, "Невозможно подключиться к интернету.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        setManager();
+        downloader.execute();
     }
 
     //Проверить доступ к файловому мессенджеру
