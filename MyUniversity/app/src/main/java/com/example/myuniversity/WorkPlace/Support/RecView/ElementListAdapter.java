@@ -13,19 +13,20 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myuniversity.R;
+import com.example.myuniversity.WorkPlace.WorkPlace;
 
 import java.util.ArrayList;
 
 public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.ViewHolder> {
+    private final String[] times = WorkPlace.workPlaceContext.getResources().getStringArray(R.array.times);
     private ArrayList<Element> list;
-    private int numbers;
-    private String times[];
 
-    public ElementListAdapter(ArrayList<Element> list, String times[]){
-        Log.i(String.valueOf(Log.INFO),"Create new Elements with " + String.valueOf(list.size()) +" size;");
+    public ElementListAdapter(ArrayList<Element> list){
+        Log.i("ElementListAdapter","Start Constructor");
+
         this.list = list;
-        this.numbers = 1;
-        this.times   = times;
+
+        Log.i("ElementListAdapter","Stop Constructor");
     }
 
     @NonNull
@@ -38,22 +39,16 @@ public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.num.setText(String.valueOf(numbers++));
-        holder.timeA.setText(String.valueOf(2 * numbers));
-        holder.timeB.setText(String.valueOf(2 * numbers + 1));
-        if(position < 8){
+        holder.num.setText(String.valueOf(list.get(position).getNumber()));
+        holder.audit.setText(list.get(position).getAuditIndex());
+        holder.pair.setText(list.get(position).getPairIndex());
+
+        holder.timeA.setText(String.valueOf(2 * (position + 1)));
+        holder.timeB.setText(String.valueOf(2 * (position + 1) + 1));
+        if (position < 8){
             holder.timeA.setText(times[2 * position]);
             holder.timeB.setText(times[2 * position + 1]);
         }
-        holder.pair.setText(list.get(position).getPairIndex());
-        holder.audit.setText(list.get(position).getAuditIndex());
-
-        int color = ((position % 2 == 0) ? R.color.backOtt : R.color.backEven);
-
-        holder.numBox.setBackgroundColor(holder.view.getContext().getColor(color));
-        holder.timeBox.setBackgroundColor(holder.view.getContext().getColor(color));
-        holder.auditBox.setBackgroundColor(holder.view.getContext().getColor(color));
-        holder.pairBox.setBackgroundColor(holder.view.getContext().getColor(color));
     }
 
     @Override
@@ -62,34 +57,20 @@ public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{
-        public View view;
-
         public TextView num;
         public TextView timeA;
         public TextView timeB;
         public TextView pair;
         public TextView audit;
 
-        public ConstraintLayout numBox;
-        public ConstraintLayout timeBox;
-        public ConstraintLayout pairBox;
-        public ConstraintLayout auditBox;
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            view = itemView;
 
             num   = (TextView) itemView.findViewById(R.id.num);
             timeA = (TextView) itemView.findViewById(R.id.timeBegin);
             timeB = (TextView) itemView.findViewById(R.id.timeEnd);
             pair  = (TextView) itemView.findViewById(R.id.pair);
             audit = (TextView) itemView.findViewById(R.id.audit);
-
-            numBox  = (ConstraintLayout) itemView.findViewById(R.id.numBox);
-            timeBox = (ConstraintLayout) itemView.findViewById(R.id.timeBox);
-            pairBox = (ConstraintLayout) itemView.findViewById(R.id.pairBox);
-            auditBox= (ConstraintLayout) itemView.findViewById(R.id.auditBox);
-
         }
     }
 

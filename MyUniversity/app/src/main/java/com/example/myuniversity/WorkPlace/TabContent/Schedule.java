@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,10 +18,13 @@ import android.widget.CompoundButton;
 import com.example.myuniversity.R;
 import com.example.myuniversity.WorkPlace.Support.Excel.ExcelManager;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
+import com.example.myuniversity.WorkPlace.Support.RecView.Day;
+import com.example.myuniversity.WorkPlace.Support.RecView.FragmentListAdapter;
 import com.example.myuniversity.WorkPlace.WorkPlace;
 import com.example.myuniversity.databinding.FragmentScheduleBinding;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 public class Schedule extends Fragment {
     private FragmentScheduleBinding binding;
@@ -49,6 +53,8 @@ public class Schedule extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void init() {
+        ArrayList<Day> days = null;
+
         binding.groupId.setChecked(WorkPlace.info.getGroup() == 0 ? true : false);
         if (WorkPlace.info.getGroup() == 0 ? true : false)
             binding.groupId.setText(getResources().getText(R.string.group_2));
@@ -93,7 +99,7 @@ public class Schedule extends Fragment {
             );
 
             manager.startParser();
-            manager.getDays(0);
+            days = manager.getDays(0);
         }
 
         if (WorkPlace.info.getContentIndex() == -1){
@@ -182,6 +188,16 @@ public class Schedule extends Fragment {
         days.add(new Day("Четверг", thursday));
         days.add(new Day("Пятница", friday));
         days.add(new Day("Суббота", saturday));
+
+
         */
+
+        if (days == null)
+            return;
+
+        FragmentListAdapter adapter = new FragmentListAdapter(days, this.getContext());
+
+        binding.fragmentList.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        binding.fragmentList.setAdapter(adapter);
     }
 }

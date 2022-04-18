@@ -2,6 +2,8 @@ package com.example.myuniversity.WorkPlace.Support.Excel;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
 import com.example.myuniversity.WorkPlace.Support.RecView.Day;
 import com.example.myuniversity.WorkPlace.Support.RecView.Element;
@@ -106,10 +108,8 @@ public class ExcelManager implements Serializable {
     }
 
     // Пробежка по всем вкладкам
-    private void fillSheetList(Sheet sheet) throws Exception{
+    private void fillSheetList(@NonNull Sheet sheet) throws Exception{
         Log.i("ExcelManager", "Start fill sheet list = " + sheet.getSheetName() + ".");
-
-
 
         ArrayList<Group> groupList = new ArrayList<>();
         Cell cell = null;
@@ -141,7 +141,7 @@ public class ExcelManager implements Serializable {
                     cell.getStringCellValue().toLowerCase().equals("понедельник"))
                 {
                     Log.i("ExcelManager", "Find Left Right cell in " + String.valueOf(i) + "; (row = " + cell.getRowIndex() + "; col = " + cell.getColumnIndex() + ").");
-                    return cell;
+                    return sheet.getRow(i - 1).getCell(j);
                 }
             }
         return null;
@@ -174,6 +174,6 @@ public class ExcelManager implements Serializable {
     public ArrayList<Day> getDays(int sheetIndex){
         SheetBlock sheet = sheetList.get(sheetIndex);
         ArrayList<Day> days = sheet.getWeek(0);
-        return null;
+        return days;
     }
 }

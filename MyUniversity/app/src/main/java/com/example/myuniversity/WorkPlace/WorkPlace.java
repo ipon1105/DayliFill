@@ -33,6 +33,7 @@ public class WorkPlace extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+    public static Context workPlaceContext;
 
     private NavController nav;
     private Downloader downloader;
@@ -48,6 +49,8 @@ public class WorkPlace extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        workPlaceContext = this;
 
         fullscreen();
         general_init();

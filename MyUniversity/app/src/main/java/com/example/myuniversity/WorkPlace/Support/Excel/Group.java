@@ -90,7 +90,7 @@ public class Group {
             //if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING)
             //name = cell.getStringCellValue();
 
-            monday.add(new Element(name, null));
+            monday.add(new Element(i, name, null));
         }
 
         return (new Day("А", monday));

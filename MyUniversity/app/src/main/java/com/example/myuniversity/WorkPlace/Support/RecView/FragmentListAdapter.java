@@ -16,22 +16,25 @@ import com.example.myuniversity.R;
 
 import java.util.ArrayList;
 
+//Адаптер для парсинга расписания
 public class FragmentListAdapter extends RecyclerView.Adapter<FragmentListAdapter.ViewHolder> {
-    private ArrayList<Day> list;
+    private ArrayList<Day> list;    //Список дней
+    private String times[];         //Массив времени для пар
 
-    private String numbers[];
-    private String times[];
+    //Конструктор
+    public FragmentListAdapter(@NonNull ArrayList<Day> list, Context context){
+        Log.i("FragmentListAdapter","Start Constructor");
 
-    public FragmentListAdapter(ArrayList<Day> list, Context context){
-        Log.i(String.valueOf(Log.INFO),"Create new Days with " + String.valueOf(list.size()) +" size;");
-        for(int i = 0; i < list.size(); i++){
-            Log.i(String.valueOf(Log.INFO),"Day " + list.get(i).getDay() +" have " + list.get(i).getElementList().size() + "elements;");
-
-        }
         this.list = list;
 
-        this.numbers = context.getResources().getStringArray(R.array.numbers);
-        this.times = context.getResources().getStringArray(R.array.times);
+        Log.i("FragmentListAdapter", "");
+        for(int i = 0; i < list.size(); i++) {
+            Log.i("FragmentListAdapter", "Day \'" + list.get(i).getDay() + "\' have " + list.get(i).getElementList().size() + " elements;");
+            for (int j = 0; j < list.get(i).getElementList().size(); j++)
+                Log.i("FragmentListAdapter", "\t" + list.get(i).getElementList().get(j).toString());
+        }
+
+        Log.i("FragmentListAdapter","Stop Constructor");
     }
 
     @NonNull
@@ -44,7 +47,7 @@ public class FragmentListAdapter extends RecyclerView.Adapter<FragmentListAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.titleName.setText(list.get(position).getDay());
-        holder.list.setAdapter(new ElementListAdapter(list.get(position).getElementList(), times));
+        holder.list.setAdapter(new ElementListAdapter(list.get(position).getElementList()));
     }
 
     @Override
@@ -73,5 +76,4 @@ public class FragmentListAdapter extends RecyclerView.Adapter<FragmentListAdapte
     public void clear(){
         list.clear();
     }
-
 }
