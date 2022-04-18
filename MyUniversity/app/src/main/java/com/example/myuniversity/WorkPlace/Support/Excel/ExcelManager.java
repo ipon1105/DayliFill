@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
 import com.example.myuniversity.WorkPlace.Support.RecView.Day;
-import com.example.myuniversity.WorkPlace.Support.RecView.Element;
+import com.example.myuniversity.WorkPlace.WorkPlace;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -15,14 +15,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -148,7 +146,7 @@ public class ExcelManager implements Serializable {
     }
 
     //Получить список групп в таблице
-    public ArrayList<Group> getGroupList(Cell cell){
+    public ArrayList<Group> getGroupList(@NonNull Cell cell){
         ArrayList<Group> groupList = new ArrayList<>();
 
         Row row = cell.getRow();
@@ -171,9 +169,13 @@ public class ExcelManager implements Serializable {
         return groupList;
     }
 
+    public ArrayList<String> getGroupListName(int sheetIndex){
+        return sheetList.get(sheetIndex).getNames();
+    }
+
     public ArrayList<Day> getDays(int sheetIndex){
         SheetBlock sheet = sheetList.get(sheetIndex);
-        ArrayList<Day> days = sheet.getWeek(0);
+        ArrayList<Day> days = sheet.getWeek(WorkPlace.info.getGroup());
         return days;
     }
 }

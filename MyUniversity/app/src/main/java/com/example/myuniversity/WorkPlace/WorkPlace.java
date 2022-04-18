@@ -1,5 +1,6 @@
 package com.example.myuniversity.WorkPlace;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.myuniversity.R;
 import com.example.myuniversity.WorkPlace.Support.Downloader;
+import com.example.myuniversity.WorkPlace.Support.Excel.ExcelManager;
 import com.example.myuniversity.WorkPlace.Support.Info;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
 import com.example.myuniversity.databinding.ActivityWorkPlaceBinding;
@@ -34,6 +36,7 @@ public class WorkPlace extends AppCompatActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
     public static Context workPlaceContext;
+    public static ExcelManager manager;
 
     private NavController nav;
     private Downloader downloader;
@@ -45,6 +48,7 @@ public class WorkPlace extends AppCompatActivity {
 
     public static Info info;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,7 @@ public class WorkPlace extends AppCompatActivity {
     }
 
     //Общая инициализация
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void general_init(){
         context = this;
         welcomBinding = WelcomBinding.inflate(getLayoutInflater());
@@ -92,9 +97,11 @@ public class WorkPlace extends AppCompatActivity {
 
         info = new Info(this);
         setManager();
+        initExcel();
     }
 
     //Участок инициализации
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void setManager(){
         downloader = (Downloader) new Downloader(new FileLoadingListener() {
             @Override
@@ -161,9 +168,37 @@ public class WorkPlace extends AppCompatActivity {
                 Log.d("debug", "End FileLoadingListener");
             }
         });
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static void initExcel(){
+        if (info.getFilePath() != null)
+            manager = new ExcelManager(
+                    info.getFilePath(),
+                    new FileLoadingListener() {
+                        @Override
+                        public void onBegin() {
+                            Log.i("ExcelManager", "Begin Excel Manager parser.");
+                        }
+                        @Override
+                        public void onSuccess() {
+                            Log.i("ExcelManager", "Success Excel Manager parser.");
+                        }
+                        @Override
+                        public void onFailure(Throwable cause) {
+                            Log.e("ExcelManager", "Failed Excel Manager parser: " + cause);
+                        }
+                        @Override
+                        public void onEnd() {
+                            Log.i("ExcelManager", "End Excel Manager parser.");
+                        }
+                    }
+            );
     }
 
     //Инициализация
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void init(){
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.box);
 
@@ -221,171 +256,17 @@ public class WorkPlace extends AppCompatActivity {
 
         generalUpdate();
 
-        //До сюда всё нормально
-        /*
-        Log.d("debug", "Before load");
-        if (info.getFilePath() == null)
-            downloader = (Downloader) new Downloader(new FileLoadingListener() {
-                @Override
-                public void onBegin() {
-                    Log.d("debug", "Begin Download");
-                }
-
-                @Override
-                public void onSuccess() {
-                    Log.d("debug", "Success Download: ");
-
-                    info.setContentList(downloader.getContentList());
-                    info.setUrlList(downloader.getUrlList());
-                    info.setFilePath(Environment.getExternalStorageDirectory() + "/Download/MyUniversity/" + new File(downloader.getUrlList().get(2)).getName());
-
-                    info.save();
-
-                    new FileLoadingTask(
-                            "https://www.sevsu.ru" + downloader.getUrlList().get(2),
-                            new File(info.getFilePath()),
-                            new FileLoadingListener() {
-                                @Override
-                                public void onBegin() {
-                                    Log.d("debug", "Begin FileLoadingTask");
-                                }
-
-                                @Override
-                                public void onSuccess() {
-                                    Log.d("debug", "Success FileLoadingTask");
-                                    try {
-                                        manager.startLoad();
-                                    } catch (FileNotFoundException e) {
-                                        Log.d("debug", "File Not Found");
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Throwable cause) {
-                                    //Ошибка в загрузки данных с эксель файла
-                                    Log.d("debug", "Faild FileLoadingTask: ", cause);
-                                }
-
-                                @Override
-                                public void onEnd() {
-                                    Log.d("debug", "End FileLoadingTask");
-                                }
-                            }
-                    ).execute();
-                }
-
-                @Override
-                public void onFailure(Throwable cause) {
-                    //Нет соединения с интернетом при первом заходи
-                    Log.d("debug", "Faild Download: ", cause);
-                }
-
-                @Override
-                public void onEnd() {
-                    Log.d("debug", "End Download");
-                }
-            }).execute();
-        else {
-            try {
-                manager.startLoad();
-            } catch (FileNotFoundException e) {
-                new FileLoadingTask(
-                        "https://www.sevsu.ru" + downloader.getUrlList().get(2),
-                        new File(info.getFilePath()),
-                        new FileLoadingListener() {
-                            @Override
-                            public void onBegin() {
-                                Log.d("debug", "Begin FileLoadingTask");
-                            }
-
-                            @Override
-                            public void onSuccess() {
-                                Log.d("debug", "Success FileLoadingTask");
-                                try {
-                                    manager.startLoad();
-                                } catch (FileNotFoundException e) {
-                                    Log.d("debug", "File Not Found");
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Throwable cause) {
-                                //Ошибка в загрузки данных с эксель файла
-                                Log.d("debug", "Faild FileLoadingTask: ", cause);
-                            }
-
-                            @Override
-                            public void onEnd() {
-                                Log.d("debug", "End FileLoadingTask");
-                            }
-                        }
-                ).execute();
-            }
-        }
-        */
-        /*
-        new FileLoadingTask(
-            "https://www.sevsu.ru" + url,
-                f,
-            new FileLoadingListener() {
-                @Override
-                public void onBegin() {
-                    Log.d("debug","Begin");
-                }
-
-                @Override
-                public void onSuccess() {
-                    Log.d("debug","Success");
-
-                    manager = new ExcelManager(f, new FileLoadingListener() {
-                        @Override
-                        public void onBegin() {
-
-                        }
-
-                        @Override
-                        public void onSuccess() {
-                            Bundle bundle = new Bundle();
-
-                            bundle.putSerializable("manager", (Serializable) manager);
-
-                            nav.navigate(R.id.schedule,bundle);
-                        }
-
-                        @Override
-                        public void onFailure(Throwable cause) {
-
-                        }
-
-                        @Override
-                        public void onEnd() {
-
-                        }
-                    });
-
-                    manager.startLoad();
-                }
-
-                @Override
-                public void onFailure(Throwable cause) {
-                    Log.d("debug","Fail: ", cause);
-                }
-
-                @Override
-                public void onEnd() {
-                    Log.d("debug","End");
-                }
-            }
-        ).execute();
-        */
     }
 
     //Попытаться обновить данные
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void generalUpdate(){
         if (!hasConnection(this)) {
             Toast.makeText(this, "Невозможно подключиться к интернету.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        initExcel();
         setManager();
         downloader.execute();
     }

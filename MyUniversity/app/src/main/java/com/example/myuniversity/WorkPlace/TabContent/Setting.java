@@ -10,10 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,12 +30,15 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class Setting extends Fragment {
+    MyRecyclerViewAdapter myRecyclerViewAdapter_1;
+    MyRecyclerViewAdapter myRecyclerViewAdapter_2;
+
     FragmentSettingBinding binding;
+    Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -54,24 +55,40 @@ public class Setting extends Fragment {
         init();
     }
 
-    //Инициализация
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void init(){
-        Context context = this.getContext();
-
-        MyRecyclerViewAdapter myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter(
-            context,
-            WorkPlace.info.getContentList()
-        );
-
+    //Функция инициализации второго списка
+    private void initGroupList(){
         if (WorkPlace.info.getContentIndex() != -1) {
-            MyRecyclerViewAdapter myRecyclerViewAdapter_2 = new MyRecyclerViewAdapter(
-                context,
-                WorkPlace.info.getDirectoryList(WorkPlace.info.getContentList().get(WorkPlace.info.getContentIndex()))
+
+            WorkPlace.manager.startParser();
+
+            myRecyclerViewAdapter_2 = new MyRecyclerViewAdapter(
+                    context,
+                    WorkPlace.manager.getGroupListName(0),
+                    1
             );
+
+            myRecyclerViewAdapter_2.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    WorkPlace.info.setGroup(position);
+                    myRecyclerViewAdapter_2.notifyDataSetChanged();
+                }
+            });
+
             binding.groupList.setLayoutManager(new LinearLayoutManager(context));
             binding.groupList.setAdapter(myRecyclerViewAdapter_2);
         }
+        myRecyclerViewAdapter_2.notifyDataSetChanged();
+    }
+
+    //Функция инициализации первого списка
+    private void initContentList(){
+        myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter(
+                context,
+                WorkPlace.info.getContentList(),
+                0
+        );
+
         myRecyclerViewAdapter_1.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
@@ -110,7 +127,7 @@ public class Setting extends Fragment {
                                     }
 
                                     Log.i("Setting", "Failed load: ", cause);
-                                    Toast.makeText(context, "Успешная загрузка", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Ошибка загрузки", Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
@@ -121,18 +138,21 @@ public class Setting extends Fragment {
                     ).execute();
                 }
 
-                MyRecyclerViewAdapter myRecyclerViewAdapter_2 = new MyRecyclerViewAdapter(
-                        context,
-                        WorkPlace.info.getDirectoryList(myRecyclerViewAdapter_1.getItem(position))
-                );
-
-                binding.groupList.setLayoutManager(new LinearLayoutManager(context));
-                binding.groupList.setAdapter(myRecyclerViewAdapter_2);
+                initGroupList();
             }
         });
 
         binding.contentList.setLayoutManager(new LinearLayoutManager(this.getContext()));
         binding.contentList.setAdapter(myRecyclerViewAdapter_1);
+    }
+
+    //Инициализация
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void init(){
+        context = this.getContext();
+
+        initGroupList();
+        initContentList();
     }
 }
 
@@ -141,11 +161,13 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.V
     private ArrayList<String> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    private int a;
 
     // data is passed into the constructor
-    MyRecyclerViewAdapter(Context context, ArrayList<String> data) {
+    MyRecyclerViewAdapter(Context context, ArrayList<String> data, int a) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        this.a = a;
     }
 
     // inflates the row layout from xml when needed
@@ -162,8 +184,16 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.V
         holder.myTextView.setText(animal);
         holder.myTextView.setTypeface(null, Typeface.NORMAL);
 
-        if (WorkPlace.info.getContentIndex() == position)
-            holder.myTextView.setTypeface(null, Typeface.BOLD);
+        switch (a){
+            case 0:
+                if (WorkPlace.info.getContentIndex() == position)
+                    holder.myTextView.setTypeface(null, Typeface.BOLD);
+                break;
+            case 1:
+                if (WorkPlace.info.getGroup() == position)
+                    holder.myTextView.setTypeface(null, Typeface.BOLD);
+                break;
+        }
     }
 
     // total number of rows

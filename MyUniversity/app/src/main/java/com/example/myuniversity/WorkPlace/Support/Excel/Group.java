@@ -57,13 +57,18 @@ public class Group {
 
     public String consist(Sheet sheet, int row, int col){
         CellRangeAddress region = null;
+        Row r = sheet.getRow(row);
+        Cell c = r.getCell(col);
+
+        if (c.getCellType() == Cell.CELL_TYPE_STRING && c.getStringCellValue() != null && !c.getStringCellValue().equals(""))
+            return c.getStringCellValue();
 
         for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
             region = sheet.getMergedRegion(i);
-            if (region.getFirstRow() <= row && row <= region.getLastRow() &&
-                region.getFirstColumn() <= col && col <= region.getLastColumn()){
-            //if (region.isInRange(row, col)) {
-                Cell c = sheet.getRow(region.getFirstRow()).getCell(col);
+            //if (region.getFirstRow() <= row && row <= region.getLastRow() &&
+            //    region.getFirstColumn() <= col && col <= region.getLastColumn()){
+            if (region.isInRange(row, col)) {
+                c = sheet.getRow(region.getFirstRow()).getCell(region.getFirstColumn());
 
                 if (c == null)
                     return null;
@@ -84,11 +89,7 @@ public class Group {
         ArrayList<Element> monday = new ArrayList<>();
 
         for (int i = 1; i <= 8; i++){
-            //cell = (row = sheet.getRow((dayIndex * 8) + i)).getCell(group_1 ? cellStart : cellStart + 1);
-
             name = consist(sheet, (dayIndex * 8) + (rowStart + i), (group_1 ? colStart : colStart + 1));
-            //if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING)
-            //name = cell.getStringCellValue();
 
             monday.add(new Element(i, name, null));
         }

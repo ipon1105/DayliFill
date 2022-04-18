@@ -1,6 +1,7 @@
 package com.example.myuniversity.WorkPlace.Support.Excel;
 
 import com.example.myuniversity.WorkPlace.Support.RecView.Day;
+import com.example.myuniversity.WorkPlace.WorkPlace;
 
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -23,9 +24,19 @@ public class SheetBlock {
     public ArrayList<Day> getWeek(int groupIndex){
         ArrayList<Day> dayArrayList = new ArrayList<>();
 
-        dayArrayList.add(groupList.get(groupIndex).getDay(sheet, 0, true));
+        for(int i = 0; i < 6; i++)
+            dayArrayList.add(groupList.get(groupIndex).getDay(sheet, i, (WorkPlace.info.getGroup() == 0 ) ? false : true));
 
         return dayArrayList;
+    }
+
+    public ArrayList<String> getNames(){
+        ArrayList<String> strList = new ArrayList<>();
+
+        for (Group g : groupList)
+            strList.add(g.getName());
+
+        return strList;
     }
 
     @Override
