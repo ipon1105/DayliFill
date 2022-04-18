@@ -70,10 +70,11 @@
 
     <!-- Разное -->
     <string name="welcome_txt">Здравствуйте, мы рады вас приветствовать в нашем приложении. Оно поможет вам избавиться от проблемы постоянно меняющегося расписания. На данный момент мы поддерживаем только институт ИТиУТС. Надеюсь оно вам понравиться, если же вы захотите поддержать нас или оставить отзыв, то наши контакты будут находиться в отделе Настройки.</string>
-    <string name="group_1">1 группа</string>
-    <string name="group_2">2 группа</string>
+    <string name="group_1">1 подгруппа</string>
+    <string name="group_2">2 подгруппа</string>
     <string name="content">Курс</string>
     <string name="group">Группа</string>
+    <string name="sheet">Вкладка</string>
     <string name="Schedule">Расписания</string>
     <string name="non_content">Для начала, вам необходимо выбрать курс и группу в настройках</string>
 </resources>

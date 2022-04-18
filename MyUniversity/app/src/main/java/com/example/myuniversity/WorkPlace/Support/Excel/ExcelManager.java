@@ -1,8 +1,10 @@
 package com.example.myuniversity.WorkPlace.Support.Excel;
 
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
 import com.example.myuniversity.WorkPlace.Support.RecView.Day;
@@ -53,8 +55,16 @@ public class ExcelManager implements Serializable {
     }
 
     // Начать парсить данные с файла
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void startParser() {
+        if (WorkPlace.manager == null)
+            WorkPlace.initExcel();
+
         this.fileLoadingListener.onBegin();
+        if (sheetList != null && sheetList.size() != 0) {
+            sheetList.clear();
+            sheetList = new ArrayList<>();
+        }
 
         String fileName = file.getName();
         if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
@@ -174,8 +184,17 @@ public class ExcelManager implements Serializable {
     }
 
     public ArrayList<Day> getDays(int sheetIndex){
+        if (sheetIndex == -1)
+            sheetIndex = 0;
         SheetBlock sheet = sheetList.get(sheetIndex);
         ArrayList<Day> days = sheet.getWeek(WorkPlace.info.getGroup());
         return days;
+    }
+
+    public ArrayList<String> getSheetNameList(){
+        ArrayList<String> strList = new ArrayList<>();
+        for (SheetBlock s : sheetList)
+            strList.add(s.getSheetName());
+        return strList;
     }
 }

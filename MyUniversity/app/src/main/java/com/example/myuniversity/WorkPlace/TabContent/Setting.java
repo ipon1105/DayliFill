@@ -32,6 +32,7 @@ import java.util.ArrayList;
 public class Setting extends Fragment {
     MyRecyclerViewAdapter myRecyclerViewAdapter_1;
     MyRecyclerViewAdapter myRecyclerViewAdapter_2;
+    MyRecyclerViewAdapter myRecyclerViewAdapter_3;
 
     FragmentSettingBinding binding;
     Context context;
@@ -55,11 +56,38 @@ public class Setting extends Fragment {
         init();
     }
 
+    //Функция инициализации третьего списка
+    private void initSheetList() {
+        if (WorkPlace.info.getContentIndex() != -1) {
+
+            myRecyclerViewAdapter_3 = new MyRecyclerViewAdapter(
+                    context,
+                    WorkPlace.manager.getSheetNameList(),
+                    2
+            );
+
+            myRecyclerViewAdapter_3.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    WorkPlace.info.setSheet(position);
+                    myRecyclerViewAdapter_3.notifyDataSetChanged();
+                }
+            });
+
+            binding.sheetList.setLayoutManager(new LinearLayoutManager(context));
+            binding.sheetList.setAdapter(myRecyclerViewAdapter_3);
+        }
+        if (myRecyclerViewAdapter_3 != null)
+            myRecyclerViewAdapter_3.notifyDataSetChanged();
+    }
+
     //Функция инициализации второго списка
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void initGroupList(){
         if (WorkPlace.info.getContentIndex() != -1) {
 
-            WorkPlace.manager.startParser();
+            if (WorkPlace.manager != null)
+                WorkPlace.manager.startParser();
 
             myRecyclerViewAdapter_2 = new MyRecyclerViewAdapter(
                     context,
@@ -78,7 +106,8 @@ public class Setting extends Fragment {
             binding.groupList.setLayoutManager(new LinearLayoutManager(context));
             binding.groupList.setAdapter(myRecyclerViewAdapter_2);
         }
-        myRecyclerViewAdapter_2.notifyDataSetChanged();
+        if (myRecyclerViewAdapter_2 != null)
+            myRecyclerViewAdapter_2.notifyDataSetChanged();
     }
 
     //Функция инициализации первого списка
@@ -117,6 +146,7 @@ public class Setting extends Fragment {
                                 public void onSuccess() {
                                     Log.i("Setting", "Success load");
                                     WorkPlace.info.setFileName(filename);
+                                    WorkPlace.initExcel();
                                 }
 
                                 @Override
@@ -138,7 +168,6 @@ public class Setting extends Fragment {
                     ).execute();
                 }
 
-                initGroupList();
             }
         });
 
@@ -151,8 +180,12 @@ public class Setting extends Fragment {
     private void init(){
         context = this.getContext();
 
+        if (WorkPlace.manager != null)
+            WorkPlace.manager.startParser();
+
         initGroupList();
         initContentList();
+        initSheetList();
     }
 }
 
@@ -193,6 +226,10 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.V
                 if (WorkPlace.info.getGroup() == position)
                     holder.myTextView.setTypeface(null, Typeface.BOLD);
                 break;
+            case 2:
+                if (WorkPlace.info.getSheet() == position)
+                    holder.myTextView.setTypeface(null, Typeface.BOLD);
+                break;
         }
     }
 
@@ -215,7 +252,8 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.V
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+            if (mClickListener != null)
+                mClickListener.onItemClick(view, getAdapterPosition());
         }
     }
 

@@ -25,7 +25,7 @@ public class SheetBlock {
         ArrayList<Day> dayArrayList = new ArrayList<>();
 
         for(int i = 0; i < 6; i++)
-            dayArrayList.add(groupList.get(groupIndex).getDay(sheet, i, (WorkPlace.info.getGroup() == 0 ) ? false : true));
+            dayArrayList.add(groupList.get(groupIndex).getDay(sheet, i, WorkPlace.info.getGroupId()));
 
         return dayArrayList;
     }

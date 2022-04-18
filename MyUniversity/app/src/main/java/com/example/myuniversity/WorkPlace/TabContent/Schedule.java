@@ -57,41 +57,42 @@ public class Schedule extends Fragment {
     private void init() {
         ArrayList<Day> days = null;
 
-        binding.groupId.setChecked(WorkPlace.info.getGroup() == 0 ? true : false);
-        if (WorkPlace.info.getGroup() == 0 ? true : false)
-            binding.groupId.setText(getResources().getText(R.string.group_2));
-        else
+        binding.groupId.setChecked(WorkPlace.info.getGroupId());
+        if (WorkPlace.info.getGroupId())
             binding.groupId.setText(getResources().getText(R.string.group_1));
+        else
+            binding.groupId.setText(getResources().getText(R.string.group_2));
 
         binding.groupId.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                WorkPlace.info.setGroup(b ? 0 : 1);
+                WorkPlace.info.setGroupId(b);
 
-                if (WorkPlace.info.getGroup() == 0 ? true : false)
-                    binding.groupId.setText(getResources().getText(R.string.group_2));
-                else
+                if (WorkPlace.info.getGroupId())
                     binding.groupId.setText(getResources().getText(R.string.group_1));
+                else
+                    binding.groupId.setText(getResources().getText(R.string.group_2));
 
                 if (WorkPlace.manager != null) {
                     adapter.clear();
-                    adapter = new FragmentListAdapter(WorkPlace.manager.getDays(0), context);
+                    adapter = new FragmentListAdapter(WorkPlace.manager.getDays(WorkPlace.info.getSheet()), context);
                     binding.fragmentList.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                 }
             }
         });
 
-        WorkPlace.initExcel();
-
-        WorkPlace.manager.startParser();
-        days =  WorkPlace.manager.getDays(0);
 
         if (WorkPlace.info.getContentIndex() == -1){
             binding.txtNonContent.setVisibility(View.VISIBLE);
             return;
         }
         binding.txtNonContent.setVisibility(View.INVISIBLE);
+
+        WorkPlace.initExcel();
+
+        WorkPlace.manager.startParser();
+        days =  WorkPlace.manager.getDays(WorkPlace.info.getSheet());
 
         if (days == null)
             return;

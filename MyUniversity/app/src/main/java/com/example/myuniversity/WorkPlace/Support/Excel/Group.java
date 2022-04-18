@@ -1,7 +1,9 @@
 package com.example.myuniversity.WorkPlace.Support.Excel;
 
+import com.example.myuniversity.R;
 import com.example.myuniversity.WorkPlace.Support.RecView.Day;
 import com.example.myuniversity.WorkPlace.Support.RecView.Element;
+import com.example.myuniversity.WorkPlace.WorkPlace;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -11,6 +13,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import java.util.ArrayList;
 
 public class Group {
+    private final String days[] = WorkPlace.workPlaceContext.getResources().getStringArray(R.array.weekDaysRus);
     private String name;
     private int rowStart;
     private int colStart;
@@ -65,8 +68,6 @@ public class Group {
 
         for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
             region = sheet.getMergedRegion(i);
-            //if (region.getFirstRow() <= row && row <= region.getLastRow() &&
-            //    region.getFirstColumn() <= col && col <= region.getLastColumn()){
             if (region.isInRange(row, col)) {
                 c = sheet.getRow(region.getFirstRow()).getCell(region.getFirstColumn());
 
@@ -86,14 +87,14 @@ public class Group {
 
         String name = null;
 
-        ArrayList<Element> monday = new ArrayList<>();
+        ArrayList<Element> day = new ArrayList<>();
 
         for (int i = 1; i <= 8; i++){
             name = consist(sheet, (dayIndex * 8) + (rowStart + i), (group_1 ? colStart : colStart + 1));
 
-            monday.add(new Element(i, name, null));
+            day.add(new Element(i, name, null));
         }
 
-        return (new Day("А", monday));
+        return (new Day(days[dayIndex], day));
     }
 }

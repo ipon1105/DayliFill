@@ -31,12 +31,35 @@ public class Info implements Serializable {
     private final String contentIndexNAME = "contentIndex";
     private final String groupIndexNAME = "groupIndex";
 
+    private final String sheetName = "sheet";
+
     private final String fileFilePathNAME = "fileFilePath";
     private final String firstStartNAME = "firstStart";
     private final String fileNameNAME = "filePath";
     private final String groupName = "group";
+    private final String groupId = "groupId";
 
     private SharedPreferences preferences;
+
+    //Индекс выбранного курса
+    public Integer getSheet(){
+        return preferences.getInt(sheetName, -1);
+    }
+
+    //Установить индекс выбранного курса
+    public void setSheet(Integer set){
+        preferences.edit().putInt(sheetName, set).apply();
+    }
+
+    //Индекс выбранного курса
+    public Boolean getGroupId(){
+        return preferences.getBoolean(groupId, true);
+    }
+
+    //Установить индекс выбранного курса
+    public void setGroupId(Boolean set){
+        preferences.edit().putBoolean(groupId, set).apply();
+    }
 
     public Info(Context context){
         preferences = context.getSharedPreferences("info", Context.MODE_PRIVATE);
