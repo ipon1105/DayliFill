@@ -1,7 +1,5 @@
 package com.example.myuniversity.WorkPlace.Support.Excel;
 
-import android.util.Log;
-
 import com.example.myuniversity.WorkPlace.Support.RecView.Day;
 import com.example.myuniversity.WorkPlace.Support.RecView.Element;
 
@@ -14,20 +12,32 @@ import java.util.ArrayList;
 
 public class Group {
     private String name;
-    private int cellStart;
+    private int rowStart;
+    private int colStart;
 
-    public Group(String name, int cellStart) {
+    public Group(String name, int rowStart, int colStart) {
         this.name = name;
-        this.cellStart = cellStart;
+        this.rowStart = rowStart;
+        this.colStart = colStart;
     }
 
-    public int getCellStart() {
-        return cellStart;
+    public int getColStart() {
+        return colStart;
     }
 
-    public void setCellStart(int cellStart) {
-        this.cellStart = cellStart;
+    public void setColStart(int colStart) {
+        this.colStart = colStart;
     }
+
+    public int getRowStart() {
+        return rowStart;
+    }
+
+    public void setRowStart(int rowStart) {
+        this.rowStart = rowStart;
+    }
+
+    /////////////////////////////////////////////////////////////////
 
     public String getName() {
         return name;
@@ -41,7 +51,7 @@ public class Group {
     public String toString() {
         return "Group{" +
                 ", name='" + name + '\'' +
-                ", cellStart=" + cellStart +
+                ", cellStart=" + colStart +
                 '}';
     }
 
@@ -50,9 +60,9 @@ public class Group {
 
         for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
             region = sheet.getMergedRegion(i);
-            //if (region.getFirstRow() <= row && row <= region.getLastRow() &&
-            //    region.getFirstColumn() <= col && col <= region.getLastColumn())
-            if (region.isInRange(row, col)) {
+            if (region.getFirstRow() <= row && row <= region.getLastRow() &&
+                region.getFirstColumn() <= col && col <= region.getLastColumn()){
+            //if (region.isInRange(row, col)) {
                 Cell c = sheet.getRow(region.getFirstRow()).getCell(col);
 
                 if (c == null)
@@ -76,7 +86,7 @@ public class Group {
         for (int i = 1; i <= 8; i++){
             //cell = (row = sheet.getRow((dayIndex * 8) + i)).getCell(group_1 ? cellStart : cellStart + 1);
 
-            name = consist(sheet, (dayIndex * 8) + i, group_1 ? cellStart : cellStart + 1);
+            name = consist(sheet, (dayIndex * 8) + (rowStart + i), (group_1 ? colStart : colStart + 1));
             //if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING)
             //name = cell.getStringCellValue();
 

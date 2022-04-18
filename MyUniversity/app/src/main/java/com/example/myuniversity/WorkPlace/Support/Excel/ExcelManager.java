@@ -154,6 +154,7 @@ public class ExcelManager implements Serializable {
         Row row = cell.getRow();
         String name = null;
 
+        // SUDO: ЖЁТСКАЯ ОШИБКА
         for(int i = cell.getColumnIndex(); i < row.getLastCellNum(); i++){
             cell = row.getCell(i);
 
@@ -164,7 +165,7 @@ public class ExcelManager implements Serializable {
             if(name.equals("") || name.equals("Время") || name.toLowerCase(Locale.ROOT).equals("понедельник"))
                 continue;
 
-            groupList.add(new Group(cell.getStringCellValue(), i));
+            groupList.add(new Group(cell.getStringCellValue(),row.getRowNum() ,i));
         }
 
         return groupList;
