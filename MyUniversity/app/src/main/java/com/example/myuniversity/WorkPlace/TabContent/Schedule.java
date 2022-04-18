@@ -1,9 +1,11 @@
 package com.example.myuniversity.WorkPlace.TabContent;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -37,6 +39,7 @@ public class Schedule extends Fragment {
         return binding.getRoot();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -44,6 +47,7 @@ public class Schedule extends Fragment {
         init();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void init() {
         binding.groupId.setChecked(WorkPlace.info.getGroup() == 0 ? true : false);
         if (WorkPlace.info.getGroup() == 0 ? true : false)
@@ -89,13 +93,16 @@ public class Schedule extends Fragment {
             );
 
             manager.startParser();
+            manager.getDays(0);
         }
 
-        if (WorkPlace.info.getContentIndex() == -1 || WorkPlace.info.getGroupIndex() == -1){
+        if (WorkPlace.info.getContentIndex() == -1){
             binding.txtNonContent.setVisibility(View.VISIBLE);
             return;
         }
         binding.txtNonContent.setVisibility(View.INVISIBLE);
+
+        /// SUDO:
 
         //
         //try {

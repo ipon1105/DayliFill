@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -108,6 +109,8 @@ public class ExcelManager implements Serializable {
     private void fillSheetList(Sheet sheet) throws Exception{
         Log.i("ExcelManager", "Start fill sheet list = " + sheet.getSheetName() + ".");
 
+
+
         ArrayList<Group> groupList = new ArrayList<>();
         Cell cell = null;
 
@@ -168,27 +171,8 @@ public class ExcelManager implements Serializable {
     }
 
     public ArrayList<Day> getDays(int sheetIndex){
-/*
         SheetBlock sheet = sheetList.get(sheetIndex);
-
-        //for(int i = 0; i < sheetList.size(); i++)
-        //    if(sheetList.get(i).getBlockList() != null)
-        //        for(int j = 0; j < sheetList.get(i).getBlockList().size(); j++)
-
-
-        ArrayList<Day> days = new ArrayList<>();
-        ArrayList<Element> elements = new ArrayList<>();
-
-        for(int i = 0; i < sheetList.size(); i++){
-            if(sheetList.get(i).getBlockList() != null)
-            for(int j = 0; j < sheetList.get(i).getBlockList().size(); j++)
-                for(int k = 0; k < sheetList.get(i).getBlockList().get(j).getGroupList().size(); k++)
-                    elements.add(new Element(sheetList.get(i).getBlockList().get(j).getGroupList().get(k).getName(),"0"));
-
-            days.add(new Day(sheetList.get(i).getSheetName(), (ArrayList<Element>) elements.clone()));
-            elements.clear();
-        }
-*/
+        ArrayList<Day> days = sheet.getWeek(0);
         return null;
     }
 }

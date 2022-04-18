@@ -47,6 +47,7 @@ public class Setting extends Fragment {
         return binding.getRoot();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -54,10 +55,23 @@ public class Setting extends Fragment {
     }
 
     //Инициализация
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void init(){
         Context context = this.getContext();
-        MyRecyclerViewAdapter myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter(this.getContext(), WorkPlace.info.getContentList());
 
+        MyRecyclerViewAdapter myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter(
+            context,
+            WorkPlace.info.getContentList()
+        );
+
+        if (WorkPlace.info.getContentIndex() != -1) {
+            MyRecyclerViewAdapter myRecyclerViewAdapter_2 = new MyRecyclerViewAdapter(
+                context,
+                WorkPlace.info.getDirectoryList(WorkPlace.info.getContentList().get(WorkPlace.info.getContentIndex()))
+            );
+            binding.groupList.setLayoutManager(new LinearLayoutManager(context));
+            binding.groupList.setAdapter(myRecyclerViewAdapter_2);
+        }
         myRecyclerViewAdapter_1.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
@@ -71,9 +85,11 @@ public class Setting extends Fragment {
                 } else {
                     Toast.makeText(context, "Начинаю загрузку расписания с сайта", Toast.LENGTH_SHORT).show();
 
+                    String filename = new File(WorkPlace.info.getUrlList().get(position)).getName();
+
                     new FileLoadingTask(
                             "https://www.sevsu.ru" + WorkPlace.info.getUrlList().get(position),
-                            new File(WorkPlace.info.getPath() + myRecyclerViewAdapter_1.getItem(position) + File.separator + new File(WorkPlace.info.getUrlList().get(position)).getName()),
+                            new File(WorkPlace.info.getPath() + myRecyclerViewAdapter_1.getItem(position) + File.separator + filename),
                             new FileLoadingListener() {
                                 @Override
                                 public void onBegin() {
@@ -83,6 +99,7 @@ public class Setting extends Fragment {
                                 @Override
                                 public void onSuccess() {
                                     Log.i("Setting", "Success load");
+                                    WorkPlace.info.setFileName(filename);
                                 }
 
                                 @Override

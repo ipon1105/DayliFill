@@ -5,6 +5,12 @@ public class Element {
     private String auditIndex;
 
     public Element(String pairIndex, String auditIndex) {
+        if (pairIndex == null)
+            pairIndex = "";
+
+        if (auditIndex == null)
+            auditIndex = "";
+
         this.pairIndex = pairIndex;
         this.auditIndex = auditIndex;
     }

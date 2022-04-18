@@ -20,6 +20,14 @@ public class SheetBlock {
         return sheet.getSheetName();
     }
 
+    public ArrayList<Day> getWeek(int groupIndex){
+        ArrayList<Day> dayArrayList = new ArrayList<>();
+
+        dayArrayList.add(groupList.get(groupIndex).getDay(sheet, 0, true));
+
+        return dayArrayList;
+    }
+
     @Override
     public String toString() {
         return "SheetBlock{" + "\n" +

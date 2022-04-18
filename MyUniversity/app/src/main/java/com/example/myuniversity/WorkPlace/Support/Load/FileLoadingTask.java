@@ -29,11 +29,18 @@ public class FileLoadingTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
+        fileLoadingListener.onBegin();
         try {
             FileUtils.copyURLToFile(new URL(url), destination);
         } catch (IOException e) {
             throwable = e;
+            fileLoadingListener.onFailure(e);
+            fileLoadingListener.onEnd();
+            return null;
         }
+
+        fileLoadingListener.onSuccess();
+        fileLoadingListener.onEnd();
         return null;
     }
 

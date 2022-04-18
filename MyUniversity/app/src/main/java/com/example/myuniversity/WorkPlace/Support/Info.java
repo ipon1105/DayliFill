@@ -42,12 +42,22 @@ public class Info implements Serializable {
         preferences = context.getSharedPreferences("info", Context.MODE_PRIVATE);
     }
 
-    //Индекс выбранной группы
+    //Первый запуск
+    public Boolean isFirstStart() {
+        return preferences.getBoolean(firstStartNAME, true);
+    }
+
+    //Установить новое значение первого запуска
+    public void setFirstStartNAME(Boolean set){
+        preferences.edit().putBoolean(firstStartNAME, set).apply();
+    }
+
+    //Индекс выбранного курса
     public Integer getContentIndex(){
         return preferences.getInt(contentIndexNAME, -1);
     }
 
-    //Установить индекс выбранной группы
+    //Установить индекс выбранного курса
     public void setContentIndex(Integer set){
         preferences.edit().putInt(contentIndexNAME, set).apply();
     }
@@ -62,24 +72,6 @@ public class Info implements Serializable {
         preferences.edit().putInt(groupIndexNAME, set).apply();
     }
 
-    //Получить путь к файла
-    public File getFilePath(){
-        if (getFileName() == null)
-            return null;
-        return new File(Environment.getExternalStorageDirectory() + "/Download/MyUniversity/" + getFileName());
-    }
-
-    //Получить группу (0 - группа 1;
-    public Integer getGroup(){
-        return preferences.getInt(groupName, 0);
-
-    }
-
-    //Установить группу
-    public void setGroup(Integer set){
-        preferences.edit().putInt(groupName, set).apply();
-    }
-
     //Получить имя расписания
     public String getFileName(){
         return preferences.getString(fileNameNAME, null);
@@ -90,14 +82,25 @@ public class Info implements Serializable {
         preferences.edit().putString(fileNameNAME, set).apply();
     }
 
-    //Первый запуск
-    public Boolean isFirstStart() {
-        return preferences.getBoolean(firstStartNAME, true);
+    //Получить путь к файла
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public File getFilePath(){
+        if (getFileName() == null)
+            return null;
+        return new File(getPath() + getDir() + getFileName());
+    }
+    ///////////////////////////////////////////////////////////////////////////////
+
+
+    //Получить группу (0 - группа 1;
+    public Integer getGroup(){
+        return preferences.getInt(groupName, 0);
+
     }
 
-    //Установить новое значение первого запуска
-    public void setFirstStartNAME(Boolean set){
-        preferences.edit().putBoolean(firstStartNAME, set).apply();
+    //Установить группу
+    public void setGroup(Integer set){
+        preferences.edit().putInt(groupName, set).apply();
     }
 
     //Получает список содержащий курсы
@@ -141,13 +144,13 @@ public class Info implements Serializable {
     //Получить список файлов в папке
     @RequiresApi(api = Build.VERSION_CODES.N)
     public ArrayList<String> getDirectoryList(String str){
-        File tmp = new File(Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity/" + str + File.separator);
+        File tmp = new File(getPath() + str + File.separator);
         if (!tmp.exists())
             tmp.mkdir();
 
         ArrayList<String> dirList = new ArrayList<>();
         ArrayList<File> files = new ArrayList<>();
-        for (File f : new File(Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity/" + str).listFiles())
+        for (File f : new File(getPath() + str).listFiles())
             files.add(f);
 
         files.sort(new Comparator<File>() {
@@ -164,8 +167,14 @@ public class Info implements Serializable {
         return dirList;
     }
 
+    //Получить коренной путь
     public String getPath(){
         return Environment.getExternalStorageDirectory().toString() + "/Download/MyUniversity/";
+    }
+
+    //Получить папку, которая выбрана
+    public String getDir(){
+        return getContentList().get(getContentIndex()) + File.separator;
     }
 
     @Override
