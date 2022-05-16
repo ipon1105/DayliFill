@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.example.myuniversity.WorkPlace.WorkPlace;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -71,7 +73,7 @@ public class Info implements Serializable {
     }
 
     //Установить новое значение первого запуска
-    public void setFirstStartNAME(Boolean set){
+    public void setFirstStart(Boolean set){
         preferences.edit().putBoolean(firstStartNAME, set).apply();
     }
 
@@ -83,16 +85,6 @@ public class Info implements Serializable {
     //Установить индекс выбранного курса
     public void setContentIndex(Integer set){
         preferences.edit().putInt(contentIndexNAME, set).apply();
-    }
-
-    //Индекс выбранной группы
-    public Integer getGroupIndex(){
-        return preferences.getInt(groupIndexNAME, -1);
-    }
-
-    //Установить индекс выбранной группы
-    public void setGroupIndex(Integer set){
-        preferences.edit().putInt(groupIndexNAME, set).apply();
     }
 
     //Получить имя расписания
@@ -112,13 +104,22 @@ public class Info implements Serializable {
             return null;
         return new File(getPath() + getDir() + getFileName());
     }
+
+    public File getFilePath(String fileName){
+        if (getFileName() == null)
+            return null;
+        return new File(getPath() + getDir() + fileName);
+    }
+
+    public String getWebSiteStr(){
+        return "https://www.sevsu.ru" + getUrlList().get(getContentIndex());
+    }
     ///////////////////////////////////////////////////////////////////////////////
 
 
     //Получить группу (0 - группа 1;
     public Integer getGroup(){
         return preferences.getInt(groupName, 0);
-
     }
 
     //Установить группу
@@ -197,7 +198,9 @@ public class Info implements Serializable {
 
     //Получить папку, которая выбрана
     public String getDir(){
-        return getContentList().get(getContentIndex()) + File.separator;
+        String tmp = getContentList().get(getContentIndex()) + File.separator;
+        tmp = tmp.replaceAll("\\s","");
+        return tmp;
     }
 
     @Override

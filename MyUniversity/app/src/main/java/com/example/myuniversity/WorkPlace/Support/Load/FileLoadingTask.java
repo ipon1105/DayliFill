@@ -2,56 +2,39 @@ package com.example.myuniversity.WorkPlace.Support.Load;
 
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.FileUtils;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class FileLoadingTask extends AsyncTask<Void, Void, Void> {
-    private String url;
+    private String path;
     private File destination;
-    private FileLoadingListener fileLoadingListener;
-    private Throwable throwable;
+    private FileLoadingList fileLoadingListener;
 
-    public FileLoadingTask(String url, File destination, FileLoadingListener fileLoadingListener) {
-        this.url = url;
+    public FileLoadingTask(String path, File destination, FileLoadingList fileLoadingListener) {
+        this.path = path;
         this.destination = destination;
         this.fileLoadingListener = fileLoadingListener;
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        fileLoadingListener.onBegin();
-    }
-
-    @Override
     protected Void doInBackground(Void... params) {
-        fileLoadingListener.onBegin();
         try {
-            FileUtils.copyURLToFile(new URL(url), destination);
+            FileUtils.copyURLToFile(new URL(path), destination);
         } catch (IOException e) {
-            throwable = e;
-            fileLoadingListener.onFailure(e);
-            fileLoadingListener.onEnd();
+            Log.e("Setting:FileLoadingTask", "Failed load: ", e);
             return null;
         }
 
-        fileLoadingListener.onSuccess();
-        fileLoadingListener.onEnd();
+        fileLoadingListener.Success();
         return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        fileLoadingListener.onEnd();
-        if (throwable != null) {
-            fileLoadingListener.onFailure(throwable);
-        } else {
-            fileLoadingListener.onSuccess();
-        }
     }
 }

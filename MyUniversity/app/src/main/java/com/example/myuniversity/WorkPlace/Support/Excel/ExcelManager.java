@@ -186,6 +186,10 @@ public class ExcelManager implements Serializable {
     public ArrayList<Day> getDays(int sheetIndex){
         if (sheetIndex == -1)
             sheetIndex = 0;
+
+        if (sheetList == null || sheetList.size() == 0)
+            return null;
+
         SheetBlock sheet = sheetList.get(sheetIndex);
         ArrayList<Day> days = sheet.getWeek(WorkPlace.info.getGroup());
         return days;

@@ -19,7 +19,8 @@
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="invisible" />
 
     <Switch
         android:id="@+id/groupId"
@@ -27,7 +28,7 @@
         android:layout_height="wrap_content"
         android:text="Switch"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/HorizontalSheetRecycler" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragmentList"
@@ -38,5 +39,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/groupId"
         tools:listitem="@layout/element_day" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="horizontal"
+        android:id="@+id/HorizontalSheetRecycler"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/content_sheet_element" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

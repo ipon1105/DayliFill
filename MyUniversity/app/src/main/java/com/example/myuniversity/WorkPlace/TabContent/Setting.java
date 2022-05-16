@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myuniversity.R;
+import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingList;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingTask;
 import com.example.myuniversity.WorkPlace.WorkPlace;
@@ -29,18 +30,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class Setting extends Fragment {
     MyRecyclerViewAdapter myRecyclerViewAdapter_1;
-    MyRecyclerViewAdapter myRecyclerViewAdapter_2;
-    MyRecyclerViewAdapter myRecyclerViewAdapter_3;
 
     FragmentSettingBinding binding;
     Context context;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,13 +44,63 @@ public class Setting extends Fragment {
         return binding.getRoot();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        init();
+
+        context = this.getContext();
+
+        if (WorkPlace.manager != null)
+            WorkPlace.manager.startParser();
+
+        initContentList();
     }
 
+    //Функция инициализации первого списка
+    private void initContentList(){
+        myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter( context, WorkPlace.info.getContentList(), 0);
+
+        myRecyclerViewAdapter_1.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
+
+            @Override
+            public void onItemClick(View view, int position) {
+                WorkPlace.info.setContentIndex(position);
+                myRecyclerViewAdapter_1.notifyDataSetChanged();
+
+                if (!WorkPlace.hasConnection(context))
+                    Toast.makeText(context, "Нет интернета для загрузки расписания", Toast.LENGTH_SHORT).show();
+                else {
+                    Toast.makeText(context, "Начинаю загрузку расписания с сайта", Toast.LENGTH_SHORT).show();
+
+                    //new File(WorkPlace.info.getPath() + myRecyclerViewAdapter_1.getItem(position) + File.separator + filename)
+                    String filename = new File(WorkPlace.info.getUrlList().get(position)).getName();
+                    new FileLoadingTask(
+                            WorkPlace.info.getWebSiteStr(),
+                            WorkPlace.info.getFilePath(filename),
+                            new FileLoadingList() {
+                                @Override
+                                public void Success() {
+                                    Log.i("Setting", "Success load");
+
+                                    WorkPlace.info.setFileName(filename);
+                                    WorkPlace.initExcel();
+                                }
+
+                                @Override
+                                public void Faild(Exception exception) {
+                                    Log.e("Setting", "Faild load: ", exception);
+                                }
+                            }
+                    ).execute();
+                }
+
+            }
+        });
+
+        binding.contentList.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        binding.contentList.setAdapter(myRecyclerViewAdapter_1);
+    }
+/*
     //Функция инициализации третьего списка
     private void initSheetList() {
         if (WorkPlace.info.getContentIndex() != -1) {
@@ -109,84 +154,10 @@ public class Setting extends Fragment {
         if (myRecyclerViewAdapter_2 != null)
             myRecyclerViewAdapter_2.notifyDataSetChanged();
     }
+*/
 
-    //Функция инициализации первого списка
-    private void initContentList(){
-        myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter(
-                context,
-                WorkPlace.info.getContentList(),
-                0
-        );
 
-        myRecyclerViewAdapter_1.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onItemClick(View view, int position) {
-                WorkPlace.info.setContentIndex(position);
-                myRecyclerViewAdapter_1.notifyDataSetChanged();
 
-                if (!WorkPlace.hasConnection(context)) {
-                    Toast.makeText(context, "Нет интернета для загрузки расписания", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    Toast.makeText(context, "Начинаю загрузку расписания с сайта", Toast.LENGTH_SHORT).show();
-
-                    String filename = new File(WorkPlace.info.getUrlList().get(position)).getName();
-
-                    new FileLoadingTask(
-                            "https://www.sevsu.ru" + WorkPlace.info.getUrlList().get(position),
-                            new File(WorkPlace.info.getPath() + myRecyclerViewAdapter_1.getItem(position) + File.separator + filename),
-                            new FileLoadingListener() {
-                                @Override
-                                public void onBegin() {
-                                    Log.i("Setting", "Begin load");
-                                }
-
-                                @Override
-                                public void onSuccess() {
-                                    Log.i("Setting", "Success load");
-                                    WorkPlace.info.setFileName(filename);
-                                    WorkPlace.initExcel();
-                                }
-
-                                @Override
-                                public void onFailure(Throwable cause) {
-                                    if (cause.getClass().equals(FileNotFoundException.class)){
-                                        Toast.makeText(context, "Файл не найден", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-
-                                    Log.i("Setting", "Failed load: ", cause);
-                                    Toast.makeText(context, "Ошибка загрузки", Toast.LENGTH_SHORT).show();
-                                }
-
-                                @Override
-                                public void onEnd() {
-                                    Log.i("Setting", "End load");
-                                }
-                            }
-                    ).execute();
-                }
-
-            }
-        });
-
-        binding.contentList.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        binding.contentList.setAdapter(myRecyclerViewAdapter_1);
-    }
-
-    //Инициализация
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void init(){
-        context = this.getContext();
-
-        if (WorkPlace.manager != null)
-            WorkPlace.manager.startParser();
-
-        initGroupList();
-        initContentList();
-        initSheetList();
-    }
 }
 
 class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {

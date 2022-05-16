@@ -10,6 +10,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -37,6 +38,7 @@ public class WorkPlace extends AppCompatActivity {
     };
     public static Context workPlaceContext;
     public static ExcelManager manager;
+    public static Info info;
 
     private NavController nav;
     private Downloader downloader;
@@ -44,17 +46,11 @@ public class WorkPlace extends AppCompatActivity {
     private ActivityWorkPlaceBinding binding;
     private WelcomBinding welcomBinding;
 
-    private Context context;
-
-    public static Info info;
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        workPlaceContext = this;
 
         fullscreen();
         general_init();
@@ -65,21 +61,18 @@ public class WorkPlace extends AppCompatActivity {
             welcomBinding.btnNext.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (info.isFirstStart()) {
-                        setManager();
+                    verifyStoragePermissions((WorkPlace) workPlaceContext);
 
-                        if (!WorkPlace.hasConnection(context))
-                            Toast.makeText(context, "Нет подключения к интернету", Toast.LENGTH_SHORT).show();
-
-                        downloader.execute();
-                    } else {
+                    if (info.isFirstStart())
+                        loadData();
+                    else {
                         setContentView(binding.getRoot());
                         init();
                     }
                 }
             });
 
-            downloader.execute();
+            loadData();
 
             return;
         }
@@ -91,22 +84,35 @@ public class WorkPlace extends AppCompatActivity {
     //Общая инициализация
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void general_init(){
-        context = this;
+        workPlaceContext = this;
+
         welcomBinding = WelcomBinding.inflate(getLayoutInflater());
         binding = ActivityWorkPlaceBinding.inflate(getLayoutInflater());
 
-        info = new Info(this);
-        setManager();
+        info = new Info(workPlaceContext);
+
         initExcel();
     }
 
-    //Участок инициализации
+    //Данный участок отвечает за инициализацию переменной для загрузки данных с сайта
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void setManager(){
+    public void loadData(){
+        Log.i("WorkPlace", "Begin setManager");
+
+        if (!hasConnection(workPlaceContext)) {
+            Toast.makeText(workPlaceContext, "Нет подключения к интернету", Toast.LENGTH_SHORT).show();
+            Log.i("WorkPlace", "Internet connection not exist");
+
+            return;
+        }
+
+
         downloader = (Downloader) new Downloader(new FileLoadingListener() {
             @Override
             public void onBegin() {
-                Log.d("debug", "Begin FileLoadingListener");
+                Log.i("WorkPlace", "Begin FileLoadingListener");
+
+                verifyStoragePermissions((WorkPlace) workPlaceContext);
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -122,7 +128,27 @@ public class WorkPlace extends AppCompatActivity {
 
             @Override
             public void onSuccess() {
-                Log.d("debug", "Success FileLoadingListener");
+                Log.i("WorkPlace", "Success FileLoadingListener");
+
+                if (!verifyStoragePermissions((WorkPlace) workPlaceContext)) {
+                    Log.i("WorkPlace", "No permissions");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            welcomBinding.btnNext.setEnabled(true);
+                            welcomBinding.btnNext.setVisibility(View.VISIBLE);
+
+                            welcomBinding.progressBar.setEnabled(false);
+                            welcomBinding.progressBar.setVisibility(View.INVISIBLE);
+
+                            welcomBinding.btnNext.setText(getResources().getString(R.string.btnAgainPage2));
+                        }
+                    });
+
+                    info.setFirstStart(true);
+                    return;
+                }
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -137,15 +163,16 @@ public class WorkPlace extends AppCompatActivity {
                     }
                 });
 
-                info.setFirstStartNAME(false);
+                info.setFirstStart(false);
                 info.setUrlList(downloader.getUrlList());
                 info.setContentList(downloader.getContentList());
 
+                initExcel();
             }
 
             @Override
             public void onFailure(Throwable cause) {
-                Log.d("debug", "Begin FileLoadingListener");
+                Log.e("WorkPlace", "Exception FileLoadingListener: ",  cause);
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -160,15 +187,19 @@ public class WorkPlace extends AppCompatActivity {
                     }
                 });
 
-                info.setFirstStartNAME(true);
+                info.setFirstStart(true);
             }
 
             @Override
             public void onEnd() {
-                Log.d("debug", "End FileLoadingListener");
+                Log.i("WorkPlace", "End FileLoadingListener");
             }
         });
 
+        Log.i("WorkPlace", "Downloader execute");
+        downloader.execute();
+
+        Log.i("WorkPlace", "End setManager");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -252,7 +283,7 @@ public class WorkPlace extends AppCompatActivity {
 
             }
         });
-        WorkPlace.verifyStoragePermissions(this);
+        WorkPlace.verifyStoragePermissions((WorkPlace) workPlaceContext);
 
         generalUpdate();
 
@@ -261,18 +292,17 @@ public class WorkPlace extends AppCompatActivity {
     //Попытаться обновить данные
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void generalUpdate(){
-        if (!hasConnection(this)) {
-            Toast.makeText(this, "Невозможно подключиться к интернету.", Toast.LENGTH_SHORT).show();
+        if (!hasConnection(workPlaceContext)) {
+            Toast.makeText(workPlaceContext, "Невозможно подключиться к интернету.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         initExcel();
-        setManager();
-        downloader.execute();
+        loadData();
     }
 
     //Проверить доступ к файловому мессенджеру
-    public static void verifyStoragePermissions(Activity activity) {
+    public static boolean verifyStoragePermissions(Activity activity) {
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
@@ -281,7 +311,9 @@ public class WorkPlace extends AppCompatActivity {
                 PERMISSIONS_STORAGE,
                 REQUEST_EXTERNAL_STORAGE
             );
+            return false;
         }
+        return true;
     }
 
     //Настройка окна
@@ -296,6 +328,9 @@ public class WorkPlace extends AppCompatActivity {
                             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
             );
         }
+
+        //Запрещаю вертерь экран
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     //Проверка соендинения
@@ -316,4 +351,5 @@ public class WorkPlace extends AppCompatActivity {
 
         return false;
     }
+
 }
