@@ -23,6 +23,7 @@ import com.example.myuniversity.R;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingList;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingTask;
+import com.example.myuniversity.WorkPlace.Support.Load.ItemClickListener;
 import com.example.myuniversity.WorkPlace.WorkPlace;
 import com.example.myuniversity.databinding.FragmentSettingBinding;
 
@@ -60,7 +61,7 @@ public class Setting extends Fragment {
     private void initContentList(){
         myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter( context, WorkPlace.info.getContentList(), 0);
 
-        myRecyclerViewAdapter_1.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
+        myRecyclerViewAdapter_1.setClickListener(new ItemClickListener() {
 
             @Override
             public void onItemClick(View view, int position) {
@@ -236,11 +237,6 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.V
     // allows clicks events to be caught
     void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
-    }
-
-    // parent activity will implement this method to respond to click events
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
     }
 
 

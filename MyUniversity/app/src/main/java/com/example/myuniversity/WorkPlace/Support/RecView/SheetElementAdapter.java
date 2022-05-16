@@ -9,15 +9,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myuniversity.R;
+import com.example.myuniversity.WorkPlace.Support.Load.ItemClickListener;
 
 import java.util.ArrayList;
 
 public class SheetElementAdapter extends RecyclerView.Adapter<SheetElementAdapter.ViewHolder>{
 
     private ArrayList<String> strList;
+    private ItemClickListener mClickListener;
 
     public SheetElementAdapter(ArrayList<String> strList){
         this.strList = strList;
+    }
+
+    public void setClickListener(ItemClickListener mClickListener){
+        this.mClickListener = mClickListener;
     }
 
     @NonNull
