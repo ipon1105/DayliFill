@@ -17,15 +17,13 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import com.example.myuniversity.R;
-import com.example.myuniversity.WorkPlace.Support.Excel.ExcelManager;
-import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
+import com.example.myuniversity.WorkPlace.Support.Load.ItemClickListener;
 import com.example.myuniversity.WorkPlace.Support.RecView.Day;
 import com.example.myuniversity.WorkPlace.Support.RecView.FragmentListAdapter;
 import com.example.myuniversity.WorkPlace.Support.RecView.SheetElementAdapter;
 import com.example.myuniversity.WorkPlace.WorkPlace;
 import com.example.myuniversity.databinding.FragmentScheduleBinding;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class Schedule extends Fragment {
@@ -85,13 +83,13 @@ public class Schedule extends Fragment {
         });
 
 
-        if (WorkPlace.info.getContentIndex() == -1){
+        if (WorkPlace.info.getCourceIndex() == -1){
             binding.txtNonContent.setVisibility(View.VISIBLE);
             return;
         }
         binding.txtNonContent.setVisibility(View.INVISIBLE);
 
-        WorkPlace.initExcel();
+        WorkPlace.initExcelManager();
         if (WorkPlace.manager == null){
             Log.i("Schedule", "All bad");
             return;
@@ -100,14 +98,25 @@ public class Schedule extends Fragment {
         days =  WorkPlace.manager.getDays(WorkPlace.info.getSheet());
 
         if (days == null)
-            return;
+        return;
 
         dayAdapter = new FragmentListAdapter(days, this.getContext());
         sheetAdapter = new SheetElementAdapter(WorkPlace.manager.getSheetNameList());
 
-        binding.fragmentList.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        binding.fragmentList.setAdapter(dayAdapter);
+        sheetAdapter.setClickListener(new ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                WorkPlace.initExcelManager();
+                WorkPlace.manager.startParser();
+                WorkPlace.info.setSheet(position);
+                sheetAdapter.notifyDataSetChanged();
+                dayAdapter.update();
+            }
+        });
 
+        binding.fragmentList.setLayoutManager(new LinearLayoutManager(this.getContext()));
+
+        binding.fragmentList.setAdapter(dayAdapter);
         binding.HorizontalSheetRecycler.setAdapter(sheetAdapter);
     }
 }

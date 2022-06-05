@@ -13,14 +13,14 @@
     <color name="double_back">#FFFFFF</color>
     <color name="white">#FFFFFFFF</color>
     <color name="super_white">#80DCDCDC</color>
-    <color name="white_gray">#CFCFCF</color>
+    <color name="white_gray">#C5D5D2</color>
     <color name="black">#ff000000</color>
 
     <!-- Fragment SignOnPage-->
-    <color name="list_back">#07257E</color>
+    <color name="list_back">#E684AC9C</color>
     <color name="title_main">#FFFFFF</color>
     <color name="toggle_on">#FFFFFF</color>
-    <color name="toggle_off">#D3D3D3</color>
+    <color name="toggle_off">#EEEEEE</color>
     <color name="item_select">#00B6FF</color>
     <color name="item_row">#FFFFFF</color>
     <color name="btn_next_on">#FFFFFF</color>
@@ -32,7 +32,7 @@
     <color name="txtTitleTable">#FFFFFF</color>
     <color name="backTitleTable">#0115BC</color>
     <color name="backOtt">#F7FFFB</color>
-    <color name="backEven">#C7DBE6</color>
+    <color name="backEven">#B3C7DBE6</color>
     <color name="txtTableFirst">#000000</color>
     <color name="txtTableSecond">#C5BFBF</color>
 
@@ -44,6 +44,8 @@
     <color name="colorSecondaryVariant">#FF018786</color>
     <color name="colorOnSecondary">#FF000000</color>
 
+    <color name="colorBtnSheer_1">#E684AC9C</color>
+    <color name="colorBtnSheer_2">#E684AC9C</color>
     <!--
 
     <color name="list_back">#181663</color>

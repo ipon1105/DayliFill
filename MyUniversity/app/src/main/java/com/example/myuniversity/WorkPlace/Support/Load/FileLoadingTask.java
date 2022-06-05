@@ -4,6 +4,7 @@ package com.example.myuniversity.WorkPlace.Support.Load;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.myuniversity.WorkPlace.WorkPlace;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.FileUtils;
 
 import java.io.DataInputStream;
@@ -30,7 +31,7 @@ public class FileLoadingTask extends AsyncTask<Void, Void, Void> {
         try {
             FileUtils.copyURLToFile(new URL(path), destination);
         } catch (IOException e) {
-            Log.e("Setting:FileLoadingTask", "Failed load: ", e);
+            fileLoadingListener.Faild(e);
             return null;
         }
 

@@ -57,9 +57,6 @@ public class ExcelManager implements Serializable {
     // Начать парсить данные с файла
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void startParser() {
-        if (WorkPlace.manager == null)
-            WorkPlace.initExcel();
-
         this.fileLoadingListener.onBegin();
         if (sheetList != null && sheetList.size() != 0) {
             sheetList.clear();
@@ -180,6 +177,10 @@ public class ExcelManager implements Serializable {
     }
 
     public ArrayList<String> getGroupListName(int sheetIndex){
+
+        if (sheetList == null || sheetList.size() == 0)
+            return null;
+
         return sheetList.get(sheetIndex).getNames();
     }
 

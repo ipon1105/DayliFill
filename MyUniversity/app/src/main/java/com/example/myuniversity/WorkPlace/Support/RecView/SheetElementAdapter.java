@@ -1,5 +1,6 @@
 package com.example.myuniversity.WorkPlace.Support.RecView;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myuniversity.R;
 import com.example.myuniversity.WorkPlace.Support.Load.ItemClickListener;
+import com.example.myuniversity.WorkPlace.WorkPlace;
 
 import java.util.ArrayList;
 
@@ -35,11 +37,15 @@ public class SheetElementAdapter extends RecyclerView.Adapter<SheetElementAdapte
     @Override
     public void onBindViewHolder(@NonNull SheetElementAdapter.ViewHolder holder, int position) {
         holder.btn.setText(strList.get(position));
+        holder.btn.setBackgroundColor(WorkPlace.workPlaceContext.getResources().getColor(R.color.colorBtnSheer_1));
+
+        if (position == WorkPlace.info.getSheet())
+            holder.btn.setBackgroundColor(WorkPlace.workPlaceContext.getResources().getColor(R.color.colorBtnSheer_2));
     }
 
     @Override
     public int getItemCount() {
-        return strList.size();
+        return (strList == null) ? 0 : strList.size();
     }
 
     public void clear(){
@@ -54,8 +60,12 @@ public class SheetElementAdapter extends RecyclerView.Adapter<SheetElementAdapte
             super(itemView);
 
             btn = (Button) itemView.findViewById(R.id.btn);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mClickListener.onItemClick(v, getAdapterPosition());
+                }
+            });
         }
     }
-
-
 }

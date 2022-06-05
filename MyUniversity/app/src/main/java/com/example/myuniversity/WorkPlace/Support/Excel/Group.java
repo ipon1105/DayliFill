@@ -63,6 +63,9 @@ public class Group {
         Row r = sheet.getRow(row);
         Cell c = r.getCell(col);
 
+        if (c == null)
+            return null;
+
         if (c.getCellType() == Cell.CELL_TYPE_STRING && c.getStringCellValue() != null && !c.getStringCellValue().equals(""))
             return c.getStringCellValue();
 

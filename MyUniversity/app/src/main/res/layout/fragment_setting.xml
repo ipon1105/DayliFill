@@ -8,43 +8,14 @@
 
 
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/groupTitle2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
-                android:text="@string/group"
-                android:textAlignment="center"
-                android:textColor="@color/black" />
-
-            <FrameLayout
-                android:id="@+id/frameLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/institute_list_background"
-                android:backgroundTint="@color/super_white">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/groupList"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    tools:listitem="@layout/content_item" />
-            </FrameLayout>
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/contentTitle"
@@ -55,7 +26,9 @@
                 android:layout_marginEnd="20dp"
                 android:text="@string/content"
                 android:textAlignment="center"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <FrameLayout
                 android:id="@+id/frameLayout2"
@@ -76,37 +49,17 @@
                     tools:listitem="@layout/content_item" />
             </FrameLayout>
 
-            <TextView
-                android:id="@+id/sheetTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
-                android:text="@string/sheet"
-                android:textAlignment="center"
-                android:textColor="@color/black" />
-
-            <FrameLayout
-                android:id="@+id/sheetLayout"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/institute_list_background"
-                android:backgroundTint="@color/super_white">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/sheetList"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    tools:listitem="@layout/content_item" />
-            </FrameLayout>
-
         </LinearLayout>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="vk.com/likejava or my_world1105@mail.ru"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

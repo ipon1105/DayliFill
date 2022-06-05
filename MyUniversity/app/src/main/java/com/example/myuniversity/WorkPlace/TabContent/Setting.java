@@ -1,5 +1,6 @@
 package com.example.myuniversity.WorkPlace.TabContent;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -21,14 +22,12 @@ import android.widget.Toast;
 
 import com.example.myuniversity.R;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingList;
-import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingListener;
 import com.example.myuniversity.WorkPlace.Support.Load.FileLoadingTask;
 import com.example.myuniversity.WorkPlace.Support.Load.ItemClickListener;
 import com.example.myuniversity.WorkPlace.WorkPlace;
 import com.example.myuniversity.databinding.FragmentSettingBinding;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -59,21 +58,18 @@ public class Setting extends Fragment {
 
     //Функция инициализации первого списка
     private void initContentList(){
-        myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter( context, WorkPlace.info.getContentList(), 0);
+        myRecyclerViewAdapter_1 = new MyRecyclerViewAdapter( context, WorkPlace.info.getCourceList(), 0);
 
         myRecyclerViewAdapter_1.setClickListener(new ItemClickListener() {
 
             @Override
             public void onItemClick(View view, int position) {
-                WorkPlace.info.setContentIndex(position);
+                WorkPlace.info.setCourceIndex(position);
                 myRecyclerViewAdapter_1.notifyDataSetChanged();
 
                 if (!WorkPlace.hasConnection(context))
                     Toast.makeText(context, "Нет интернета для загрузки расписания", Toast.LENGTH_SHORT).show();
                 else {
-                    Toast.makeText(context, "Начинаю загрузку расписания с сайта", Toast.LENGTH_SHORT).show();
-
-                    //new File(WorkPlace.info.getPath() + myRecyclerViewAdapter_1.getItem(position) + File.separator + filename)
                     String filename = new File(WorkPlace.info.getUrlList().get(position)).getName();
                     new FileLoadingTask(
                             WorkPlace.info.getWebSiteStr(),
@@ -84,12 +80,25 @@ public class Setting extends Fragment {
                                     Log.i("Setting", "Success load");
 
                                     WorkPlace.info.setFileName(filename);
-                                    WorkPlace.initExcel();
+                                    WorkPlace.initExcelManager();
+
+                                    ((Activity) WorkPlace.workPlaceContext).runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(WorkPlace.workPlaceContext, "Файл успешно загружен.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
 
                                 @Override
                                 public void Faild(Exception exception) {
-                                    Log.e("Setting", "Faild load: ", exception);
+                                    Log.e("Setting:FileLoadingTask", "Failed load: ", exception);
+                                    ((Activity) WorkPlace.workPlaceContext).runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(WorkPlace.workPlaceContext, "Ошибка. Не получилось загрузить файл.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
                             }
                     ).execute();
@@ -191,7 +200,7 @@ class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.V
 
         switch (a){
             case 0:
-                if (WorkPlace.info.getContentIndex() == position)
+                if (WorkPlace.info.getCourceIndex() == position)
                     holder.myTextView.setTypeface(null, Typeface.BOLD);
                 break;
             case 1:

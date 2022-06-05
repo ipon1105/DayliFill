@@ -13,13 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myuniversity.R;
+import com.example.myuniversity.WorkPlace.WorkPlace;
 
 import java.util.ArrayList;
 
 //Адаптер для парсинга расписания
 public class FragmentListAdapter extends RecyclerView.Adapter<FragmentListAdapter.ViewHolder> {
     private ArrayList<Day> list;    //Список дней
-    private String times[];         //Массив времени для пар
 
     //Конструктор
     public FragmentListAdapter(@NonNull ArrayList<Day> list, Context context){
@@ -52,7 +52,7 @@ public class FragmentListAdapter extends RecyclerView.Adapter<FragmentListAdapte
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return (list == null) ? 0 : list.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -74,6 +74,14 @@ public class FragmentListAdapter extends RecyclerView.Adapter<FragmentListAdapte
     }
 
     public void clear(){
+        if (list == null)
+            return;
         list.clear();
+    }
+
+    public void update(){
+        clear();
+        list = WorkPlace.manager.getDays(WorkPlace.info.getSheet());
+        notifyDataSetChanged();
     }
 }

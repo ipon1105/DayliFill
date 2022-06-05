@@ -5,23 +5,16 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-
-import com.example.myuniversity.WorkPlace.WorkPlace;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class Info implements Serializable {
-    private final String contentMatchNAME[] = {
+    private final String courceMatchNAME[] = {
         "c_1", "c_2", "c_3", "c_4", "c_5",
         "c_6", "c_7", "c_8", "c_9", "c_10"
     };
@@ -30,10 +23,12 @@ public class Info implements Serializable {
         "u_6", "u_7", "u_8", "u_9", "u_10"
     };
 
-    private final String contentIndexNAME = "contentIndex";
+    private final String courceIndexNAME = "courceIndex";
     private final String groupIndexNAME = "groupIndex";
 
     private final String sheetName = "sheet";
+
+    private final String homeWorkName = "HomeWork";
 
     private final String fileFilePathNAME = "fileFilePath";
     private final String firstStartNAME = "firstStart";
@@ -43,9 +38,17 @@ public class Info implements Serializable {
 
     private SharedPreferences preferences;
 
+    public String getHomeWork(){
+        return preferences.getString(homeWorkName, "");
+    }
+
+    public void setHomeWork(String str){
+        preferences.edit().putString(homeWorkName, str).apply();
+    }
+
     //Индекс выбранного курса
     public Integer getSheet(){
-        return preferences.getInt(sheetName, -1);
+        return preferences.getInt(sheetName, 0);
     }
 
     //Установить индекс выбранного курса
@@ -78,13 +81,13 @@ public class Info implements Serializable {
     }
 
     //Индекс выбранного курса
-    public Integer getContentIndex(){
-        return preferences.getInt(contentIndexNAME, -1);
+    public Integer getCourceIndex(){
+        return preferences.getInt(courceIndexNAME, 0);
     }
 
     //Установить индекс выбранного курса
-    public void setContentIndex(Integer set){
-        preferences.edit().putInt(contentIndexNAME, set).apply();
+    public void setCourceIndex(Integer set){
+        preferences.edit().putInt(courceIndexNAME, set).apply();
     }
 
     //Получить имя расписания
@@ -107,12 +110,12 @@ public class Info implements Serializable {
 
     public File getFilePath(String fileName){
         if (getFileName() == null)
-            return null;
+            setFileName(fileName);
         return new File(getPath() + getDir() + fileName);
     }
 
     public String getWebSiteStr(){
-        return "https://www.sevsu.ru" + getUrlList().get(getContentIndex());
+        return "https://www.sevsu.ru" + getUrlList().get(getCourceIndex());
     }
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -128,22 +131,22 @@ public class Info implements Serializable {
     }
 
     //Получает список содержащий курсы
-    public ArrayList<String> getContentList() {
-        ArrayList<String> contentList = new ArrayList<>();
+    public ArrayList<String> getCourceList() {
+        ArrayList<String> courceList = new ArrayList<>();
         String tmp = null;
 
         for(int i = 0; i < 10; i++) {
-            if ((tmp = preferences.getString(contentMatchNAME[i], null)) == null)
+            if ((tmp = preferences.getString(courceMatchNAME[i], null)) == null)
                 continue;
-            contentList.add(tmp);
+            courceList.add(tmp);
         }
-        return contentList;
+        return courceList;
     }
 
     //Сохраняет список содержащий курсы
-    public void setContentList(ArrayList<String> contentList) {
-        for (int i = 0; i < contentList.size(); i++)
-            preferences.edit().putString(contentMatchNAME[i], contentList.get(i)).apply();
+    public void setCourceList(ArrayList<String> courceList) {
+        for (int i = 0; i < courceList.size(); i++)
+            preferences.edit().putString(courceMatchNAME[i], courceList.get(i)).apply();
     }
 
     //Получает список содержащий ссылки
@@ -198,7 +201,7 @@ public class Info implements Serializable {
 
     //Получить папку, которая выбрана
     public String getDir(){
-        String tmp = getContentList().get(getContentIndex()) + File.separator;
+        String tmp = getCourceList().get(getCourceIndex()) + File.separator;
         tmp = tmp.replaceAll("\\s","");
         return tmp;
     }
@@ -207,7 +210,6 @@ public class Info implements Serializable {
     public String toString() {
         return "Info{" + "\n" +
                 "fileName = " + getFileName() + "\n" +
-                "contentList = " + getContentList() + "\n" +
                 "urlList = " + getUrlList() + "\n" +
                 '}';
     }
